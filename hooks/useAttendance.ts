@@ -155,9 +155,13 @@ export function formatDuration(sec: number): string {
   return [h, m, s].map((v) => String(v).padStart(2, '0')).join(':');
 }
 
-/** Format a datetime string to "8:30 AM" */
-export function formatTime(dt: string | null): string {
-  if (!dt) return '—';
-  const d = new Date(dt.replace(' ', 'T'));
-  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+/** Format a UNIX timestamp (seconds) to a time string with timezone support */
+export function formatTime(ts: number | null, timeZone?: string): string {
+  if (!ts) return '—';
+  const d = new Date(ts * 1000);
+  try {
+    return d.toLocaleTimeString('en-US', { timeZone, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  } catch {
+    return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
 }

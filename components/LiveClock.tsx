@@ -4,23 +4,29 @@ import { Text, StyleSheet } from 'react-native';
 interface LiveClockProps {
   style?: object;
   color?: string;
+  timeZone?: string;
 }
 
-export function LiveClock({ style, color = '#fff' }: LiveClockProps) {
-  const [time, setTime] = useState(getCurrentTime());
+export function LiveClock({ style, color = '#fff', timeZone }: LiveClockProps) {
+  const [time, setTime] = useState(getCurrentTime(timeZone));
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTime(getCurrentTime());
+      setTime(getCurrentTime(timeZone));
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [timeZone]);
 
   return <Text style={[styles.clock, { color }, style]}>{time}</Text>;
 }
 
-function getCurrentTime(): string {
+function getCurrentTime(timeZone?: string): string {
   const now = new Date();
+  if (timeZone) {
+    try {
+      return now.toLocaleTimeString('en-US', { timeZone, hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    } catch(e) {}
+  }
   const h = now.getHours();
   const m = String(now.getMinutes()).padStart(2, '0');
   const s = String(now.getSeconds()).padStart(2, '0');

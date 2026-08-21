@@ -130,6 +130,7 @@ export default function HomeScreen() {
   };
 
   const todayDate = new Date().toLocaleDateString('en-US', {
+    timeZone: status?.tz_name,
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -164,12 +165,12 @@ export default function HomeScreen() {
     <View style={styles.timestampsCard}>
       <Text style={styles.timestampsTitle}>TODAY'S TIMESTAMPS</Text>
       <View style={styles.pillsGrid}>
-        {[
-          { label: 'TIME IN', value: formatTime(record?.time_in ?? null) },
-          { label: 'BREAK IN', value: formatTime(record?.break_in ?? null) },
-          { label: 'BREAK OUT', value: formatTime(record?.break_out ?? null) },
-          { label: 'TIME OUT', value: formatTime(record?.time_out ?? null) },
-        ].map((item, idx) => (
+          {[
+            { label: 'TIME IN', value: formatTime(record?.time_in_ts ?? null, status?.tz_name) },
+            { label: 'BREAK IN', value: formatTime(record?.break_in_ts ?? null, status?.tz_name) },
+            { label: 'BREAK OUT', value: formatTime(record?.break_out_ts ?? null, status?.tz_name) },
+            { label: 'TIME OUT', value: formatTime(record?.time_out_ts ?? null, status?.tz_name) },
+          ].map((item, idx) => (
           <View key={idx} style={styles.timestampPill}>
             <Text style={styles.pillLabel}>{item.label}</Text>
             <Text style={styles.pillValue}>{item.value || '—'}</Text>
