@@ -144,6 +144,80 @@ export default function HomeScreen() {
     }
   };
 
+  const renderWorkedTime = () => (
+    <View style={styles.workedCard}>
+      <View style={styles.workedCardHeader}>
+        <Text style={styles.workedCardTitle}>WORKED TIME (LIVE)</Text>
+        {attendStatus === 'working' && <View style={styles.liveDot} />}
+      </View>
+      <Animated.View style={{ transform: [{ scale: attendStatus === 'working' ? pulseAnim : 1 }] }}>
+        <Text style={styles.workedTimeText}>{formatDuration(workedSec)}</Text>
+      </Animated.View>
+      <View style={styles.statusInfoRow}>
+        <Feather name="info" size={14} color="#9ca3af" />
+        <Text style={styles.statusInfoText}>{getStatusText()}</Text>
+      </View>
+    </View>
+  );
+
+  const renderTimestamps = () => (
+    <View style={styles.timestampsCard}>
+      <Text style={styles.timestampsTitle}>TODAY'S TIMESTAMPS</Text>
+      <View style={styles.pillsGrid}>
+        {[
+          { label: 'TIME IN', value: formatTime(record?.time_in ?? null) },
+          { label: 'BREAK IN', value: formatTime(record?.break_in ?? null) },
+          { label: 'BREAK OUT', value: formatTime(record?.break_out ?? null) },
+          { label: 'TIME OUT', value: formatTime(record?.time_out ?? null) },
+        ].map((item, idx) => (
+          <View key={idx} style={styles.timestampPill}>
+            <Text style={styles.pillLabel}>{item.label}</Text>
+            <Text style={styles.pillValue}>{item.value || '—'}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+
+  const renderActions = () => (
+    <View style={styles.actionsCard}>
+      <Text style={styles.actionsTitle}>QUICK ACTIONS</Text>
+      <View style={styles.actionButtonsGrid}>
+        {getPunchButtons().map((btn) => (
+          <TouchableOpacity
+            key={btn.type}
+            style={[
+              styles.actionBtn, 
+              { backgroundColor: btn.color },
+              !btn.available && styles.actionBtnDisabled
+            ]}
+            onPress={() => btn.available && handlePunch(btn.type)}
+            disabled={!btn.available || isPunching}
+            activeOpacity={0.8}
+          >
+            {isPunching ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <Feather name={btn.icon} size={28} color="#fff" style={{ marginBottom: 12 }} />
+                <Text style={styles.actionBtnText}>{btn.label}</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Smart Actions Alert */}
+      <View style={styles.smartActionsAlert}>
+        <Feather name="zap" size={16} color="#d97706" style={{ marginTop: 2 }} />
+        <Text style={styles.smartActionsText}>
+          <Text style={{ fontWeight: '700', color: '#b45309' }}>Smart Actions: </Text>
+          Buttons will automatically enable/disable based on your current state.
+        </Text>
+      </View>
+    </View>
+  );
+
   return (
     <View style={styles.pageContainer}>
       <StatusBar style="dark" />
@@ -176,87 +250,25 @@ export default function HomeScreen() {
             </View>
           ) : null}
 
-          {/* Two Column Layout */}
+          {/* Dynamic Column Layout */}
           <View style={[styles.contentGrid, isDesktop && styles.contentGridDesktop]}>
-            
-            {/* Left Column */}
-            <View style={styles.column}>
-              
-              {/* Worked Time Card */}
-              <View style={styles.workedCard}>
-                <View style={styles.workedCardHeader}>
-                  <Text style={styles.workedCardTitle}>WORKED TIME (LIVE)</Text>
-                  {attendStatus === 'working' && <View style={styles.liveDot} />}
+            {isDesktop ? (
+              <>
+                <View style={styles.column}>
+                  {renderWorkedTime()}
+                  {renderTimestamps()}
                 </View>
-                <Animated.View style={{ transform: [{ scale: attendStatus === 'working' ? pulseAnim : 1 }] }}>
-                  <Text style={styles.workedTimeText}>{formatDuration(workedSec)}</Text>
-                </Animated.View>
-                <View style={styles.statusInfoRow}>
-                  <Feather name="info" size={14} color="#9ca3af" />
-                  <Text style={styles.statusInfoText}>{getStatusText()}</Text>
+                <View style={styles.column}>
+                  {renderActions()}
                 </View>
+              </>
+            ) : (
+              <View style={styles.column}>
+                {renderWorkedTime()}
+                {renderActions()}
+                {renderTimestamps()}
               </View>
-
-              {/* Today's Timestamps */}
-              <View style={styles.timestampsCard}>
-                <Text style={styles.timestampsTitle}>TODAY'S TIMESTAMPS</Text>
-                <View style={styles.pillsGrid}>
-                  {[
-                    { label: 'TIME IN', value: formatTime(record?.time_in ?? null) },
-                    { label: 'BREAK IN', value: formatTime(record?.break_in ?? null) },
-                    { label: 'BREAK OUT', value: formatTime(record?.break_out ?? null) },
-                    { label: 'TIME OUT', value: formatTime(record?.time_out ?? null) },
-                  ].map((item, idx) => (
-                    <View key={idx} style={styles.timestampPill}>
-                      <Text style={styles.pillLabel}>{item.label}</Text>
-                      <Text style={styles.pillValue}>{item.value || '—'}</Text>
-                    </View>
-                  ))}
-                </View>
-              </View>
-
-            </View>
-
-            {/* Right Column */}
-            <View style={styles.column}>
-              <View style={styles.actionsCard}>
-                <Text style={styles.actionsTitle}>QUICK ACTIONS</Text>
-                <View style={styles.actionButtonsGrid}>
-                  {getPunchButtons().map((btn) => (
-                    <TouchableOpacity
-                      key={btn.type}
-                      style={[
-                        styles.actionBtn, 
-                        { backgroundColor: btn.color },
-                        !btn.available && styles.actionBtnDisabled
-                      ]}
-                      onPress={() => btn.available && handlePunch(btn.type)}
-                      disabled={!btn.available || isPunching}
-                      activeOpacity={0.8}
-                    >
-                      {isPunching ? (
-                        <ActivityIndicator color="#fff" />
-                      ) : (
-                        <>
-                          <Feather name={btn.icon} size={28} color="#fff" style={{ marginBottom: 12 }} />
-                          <Text style={styles.actionBtnText}>{btn.label}</Text>
-                        </>
-                      )}
-                    </TouchableOpacity>
-                  ))}
-                </View>
-
-                {/* Smart Actions Alert */}
-                <View style={styles.smartActionsAlert}>
-                  <Feather name="zap" size={16} color="#d97706" style={{ marginTop: 2 }} />
-                  <Text style={styles.smartActionsText}>
-                    <Text style={{ fontWeight: '700', color: '#b45309' }}>Smart Actions: </Text>
-                    Buttons will automatically enable/disable based on your current state.
-                  </Text>
-                </View>
-              </View>
-            </View>
-
+            )}
           </View>
         </View>
       </ScrollView>
