@@ -1,13 +1,17 @@
-// Base API URL — change this to your machine's LAN IP for real device testing
-// Android emulator uses 10.0.2.2 to reach localhost
-// iOS simulator uses localhost
-// Real device on same WiFi: use your machine's local IP e.g. http://192.168.1.x
+import { Platform } from 'react-native';
 
-export const BASE_URL = 'http://10.0.2.2/time'; // ← Change this if needed
+const getBaseUrl = () => {
+  if (Platform.OS === 'web') {
+    return 'http://localhost/time_system/time';
+  }
+  return 'http://10.0.2.2/time_system/time';
+};
+
+export const BASE_URL = getBaseUrl();
 
 export const ENDPOINTS = {
   login:      `${BASE_URL}/api/mobile_auth.php`,
-  logout:     `${BASE_URL}/logout.php`,
+  logout:     `${BASE_URL}/api/mobile_logout.php`,
   shift:      `${BASE_URL}/api/attendance_shift.php`,
   leaveApi:   `${BASE_URL}/api/leave_requests.php`,
   users:      `${BASE_URL}/api/user_management.php`,
