@@ -38,12 +38,12 @@ export function AttendanceRow({ record }: AttendanceRowProps) {
       <View style={styles.timesCol}>
         <View style={styles.timeItem}>
           <Text style={styles.timeLabel}>IN</Text>
-          <Text style={styles.timeValue}>{formatTime(record.time_in)}</Text>
+          <Text style={styles.timeValue}>{formatTime(record.time_in_ts)}</Text>
         </View>
         <View style={styles.divider} />
         <View style={styles.timeItem}>
           <Text style={styles.timeLabel}>OUT</Text>
-          <Text style={styles.timeValue}>{formatTime(record.time_out)}</Text>
+          <Text style={styles.timeValue}>{formatTime(record.time_out_ts)}</Text>
         </View>
         <View style={styles.divider} />
         <View style={styles.timeItem}>

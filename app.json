@@ -9,7 +9,10 @@
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.shift.timesystem"
+      "bundleIdentifier": "com.shift.timesystem",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.shift.timesystem",
@@ -30,7 +33,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "6357ed45-108c-4dbc-90fe-3d0407a449e3"
+      }
     }
   }
 }
-
