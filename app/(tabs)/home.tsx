@@ -78,6 +78,17 @@ export default function HomeScreen() {
       time_out: 'Time Out',
     };
 
+    if (Platform.OS === 'web' && typeof (globalThis as any).window !== 'undefined') {
+      const confirmRes = (globalThis as any).confirm(`Are you sure you want to ${labels[type]}?`);
+      if (confirmRes) {
+        const res = await punch(type);
+        if (!res.success) {
+          (globalThis as any).alert(res.error ?? 'Punch failed.');
+        }
+      }
+      return;
+    }
+
     Alert.alert(
       'Confirm',
       `Are you sure you want to ${labels[type]}?`,
@@ -102,28 +113,28 @@ export default function HomeScreen() {
         type: 'time_in',
         label: 'Time In',
         icon: 'log-in',
-        color: '#89c8a3', // Greenish
-        available: !record?.time_in,
+        color: '#10b981', // Solid Emerald Green
+        available: !record || !record.time_in,
       },
       {
         type: 'break_in',
         label: 'Break In',
         icon: 'coffee',
-        color: '#f5af24', // Yellowish orange
+        color: '#f59e0b', // Solid Amber
         available: !!(record?.time_in && !record.time_out && !record.break_in),
       },
       {
         type: 'break_out',
         label: 'Break Out',
         icon: 'user-check',
-        color: '#918fc3', // Purple/Blue
+        color: '#8b5cf6', // Solid Violet
         available: !!(record?.break_in && !record.break_out && !record.time_out),
       },
       {
         type: 'time_out',
         label: 'Time Out',
         icon: 'log-out',
-        color: '#f05b62', // Red/Pink
+        color: '#ef4444', // Solid Red
         available: !!(record?.time_in && !record.time_out),
       },
     ];
@@ -206,15 +217,6 @@ export default function HomeScreen() {
             )}
           </TouchableOpacity>
         ))}
-      </View>
-
-      {/* Smart Actions Alert */}
-      <View style={styles.smartActionsAlert}>
-        <Feather name="zap" size={16} color="#d97706" style={{ marginTop: 2 }} />
-        <Text style={styles.smartActionsText}>
-          <Text style={{ fontWeight: '700', color: '#b45309' }}>Smart Actions: </Text>
-          Buttons will automatically enable/disable based on your current state.
-        </Text>
       </View>
     </View>
   );
