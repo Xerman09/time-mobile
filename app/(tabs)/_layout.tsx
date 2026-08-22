@@ -1,12 +1,13 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import { useAuth } from '../../hooks/useAuth';
 
-function TabIcon({ emoji, label, focused }: { emoji: string; label: string; focused: boolean }) {
+function TabIcon({ icon, label, focused }: { icon: keyof typeof Feather.glyphMap; label: string; focused: boolean }) {
   return (
     <View style={[styles.tabItem, focused && styles.tabItemFocused]}>
-      <Text style={styles.tabEmoji}>{emoji}</Text>
+      <Feather name={icon} size={22} color={focused ? '#0d9488' : '#94a3b8'} />
       <Text style={[styles.tabLabel, focused && styles.tabLabelFocused]}>{label}</Text>
     </View>
   );
@@ -28,7 +29,7 @@ export default function TabsLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ focused }) => (
-            <TabIcon emoji="⏱" label="Home" focused={focused} />
+            <TabIcon icon="home" label="Home" focused={focused} />
           ),
         }}
       />
@@ -37,7 +38,7 @@ export default function TabsLayout() {
         options={{
           title: 'History',
           tabBarIcon: ({ focused }) => (
-            <TabIcon emoji="📋" label="History" focused={focused} />
+            <TabIcon icon="file-text" label="History" focused={focused} />
           ),
         }}
       />
@@ -46,7 +47,7 @@ export default function TabsLayout() {
         options={{
           title: 'Leave',
           tabBarIcon: ({ focused }) => (
-            <TabIcon emoji="🌴" label="Leave" focused={focused} />
+            <TabIcon icon="calendar" label="Leave" focused={focused} />
           ),
         }}
       />
@@ -55,7 +56,7 @@ export default function TabsLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ focused }) => (
-            <TabIcon emoji="👤" label="Profile" focused={focused} />
+            <TabIcon icon="user" label="Profile" focused={focused} />
           ),
         }}
       />
@@ -86,14 +87,13 @@ const styles = StyleSheet.create({
     minWidth: 60,
   },
   tabItemFocused: {
-    backgroundColor: '#ede9fe',
+    backgroundColor: '#ccfbf1',
   },
-  tabEmoji: { fontSize: 22 },
   tabLabel: {
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#94a3b8',
-    marginTop: 3,
+    marginTop: 4,
   },
-  tabLabelFocused: { color: '#4f46e5' },
+  tabLabelFocused: { color: '#0d9488' },
 });
