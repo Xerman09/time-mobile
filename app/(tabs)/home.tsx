@@ -10,7 +10,8 @@ import {
   Animated,
   ActivityIndicator,
   useWindowDimensions,
-  Platform
+  Platform,
+  Modal,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Feather } from '@expo/vector-icons';
@@ -45,6 +46,15 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
+  // Custom Modal State
+  const [modalConfig, setModalConfig] = useState<{
+    visible: boolean;
+    type: 'confirm' | 'error';
+    title: string;
+    message: string;
+    onConfirm?: () => void;
+  }>({ visible: false, type: 'confirm', title: '', message: '' });
+
   const record = status?.record ?? null;
   const attendStatus = deriveStatus(record);
 
@@ -70,7 +80,7 @@ export default function HomeScreen() {
     setRefreshing(false);
   };
 
-  const handlePunch = async (type: PunchType) => {
+  const handlePunch = (type: PunchType) => {
     const labels: Record<PunchType, string> = {
       time_in: 'Time In',
       break_in: 'Break In',
@@ -78,33 +88,27 @@ export default function HomeScreen() {
       time_out: 'Time Out',
     };
 
-    if (Platform.OS === 'web' && typeof (globalThis as any).window !== 'undefined') {
-      const confirmRes = (globalThis as any).confirm(`Are you sure you want to ${labels[type]}?`);
-      if (confirmRes) {
+    setModalConfig({
+      visible: true,
+      type: 'confirm',
+      title: 'Confirm Punch',
+      message: `Are you sure you want to ${labels[type]}?`,
+      onConfirm: async () => {
+        setModalConfig(prev => ({ ...prev, visible: false }));
         const res = await punch(type);
         if (!res.success) {
-          (globalThis as any).alert(res.error ?? 'Punch failed.');
+          // Slight delay to allow fade out of previous modal before showing error
+          setTimeout(() => {
+            setModalConfig({
+              visible: true,
+              type: 'error',
+              title: 'Error',
+              message: res.error ?? 'Punch failed.',
+            });
+          }, 300);
         }
       }
-      return;
-    }
-
-    Alert.alert(
-      'Confirm',
-      `Are you sure you want to ${labels[type]}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Confirm',
-          onPress: async () => {
-            const result = await punch(type);
-            if (!result.success) {
-              Alert.alert('Error', result.error ?? 'Punch failed.');
-            }
-          },
-        },
-      ]
-    );
+    });
   };
 
   const getPunchButtons = (): PunchButtonConfig[] => {
@@ -281,6 +285,38 @@ export default function HomeScreen() {
           <ActivityIndicator size="large" color="#6366f1" />
         </View>
       ) : null}
+
+      {/* Custom Modal */}
+      <Modal visible={modalConfig.visible} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Feather name={modalConfig.type === 'error' ? 'alert-circle' : 'help-circle'} size={24} color={modalConfig.type === 'error' ? '#ef4444' : '#6366f1'} />
+              <Text style={styles.modalTitle}>{modalConfig.title}</Text>
+            </View>
+            <Text style={styles.modalMessage}>{modalConfig.message}</Text>
+            <View style={styles.modalActions}>
+              {modalConfig.type === 'confirm' && (
+                <TouchableOpacity style={styles.modalBtnCancel} onPress={() => setModalConfig(prev => ({ ...prev, visible: false }))}>
+                  <Text style={styles.modalBtnCancelText}>Cancel</Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity 
+                style={[styles.modalBtnConfirm, modalConfig.type === 'error' && { backgroundColor: '#ef4444' }]} 
+                onPress={() => {
+                  if (modalConfig.type === 'confirm' && modalConfig.onConfirm) {
+                    modalConfig.onConfirm();
+                  } else {
+                    setModalConfig(prev => ({ ...prev, visible: false }));
+                  }
+                }}
+              >
+                <Text style={styles.modalBtnConfirmText}>{modalConfig.type === 'confirm' ? 'Yes, Confirm' : 'OK'}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -523,5 +559,65 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.7)',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.6)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    padding: 24,
+    width: '100%',
+    maxWidth: 400,
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 10px 40px rgba(0,0,0,0.2)' } : { elevation: 10 }),
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#1e293b',
+  },
+  modalMessage: {
+    fontSize: 15,
+    color: '#475569',
+    lineHeight: 22,
+    marginBottom: 32,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 12,
+  },
+  modalBtnCancel: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    backgroundColor: '#f1f5f9',
+  },
+  modalBtnCancelText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#475569',
+  },
+  modalBtnConfirm: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    backgroundColor: '#6366f1',
+  },
+  modalBtnConfirmText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#fff',
   },
 });
