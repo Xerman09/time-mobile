@@ -117,28 +117,28 @@ export default function HomeScreen() {
         type: 'time_in',
         label: 'Time In',
         icon: 'log-in',
-        color: '#10b981', // Solid Emerald Green
+        color: '#2dd4bf', // Teal-400 (Matches ATECH Mobile theme)
         available: !record || !record.time_in,
       },
       {
         type: 'break_in',
         label: 'Break In',
         icon: 'coffee',
-        color: '#f59e0b', // Solid Amber
+        color: '#fbbf24', // Amber-400
         available: !!(record?.time_in && !record.time_out && !record.break_in),
       },
       {
         type: 'break_out',
         label: 'Break Out',
         icon: 'user-check',
-        color: '#8b5cf6', // Solid Violet
+        color: '#a78bfa', // Violet-400
         available: !!(record?.break_in && !record.break_out && !record.time_out),
       },
       {
         type: 'time_out',
         label: 'Time Out',
         icon: 'log-out',
-        color: '#ef4444', // Solid Red
+        color: '#f87171', // Red-400
         available: !!(record?.time_in && !record.time_out),
       },
     ];
@@ -324,7 +324,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   pageContainer: {
     flex: 1,
-    backgroundColor: '#f4f7fb',
+    backgroundColor: '#f8fafc',
   },
   scrollContent: {
     flexGrow: 1,
@@ -347,7 +347,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 20,
     borderRadius: 16,
-    // Web shadow
+    borderWidth: 1,
+    borderColor: '#f1f5f9',
     ...(Platform.OS === 'web' ? { boxShadow: '0px 4px 20px rgba(0,0,0,0.03)' } : { elevation: 2 }),
   },
   headerRowDesktop: {
@@ -363,7 +364,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: '#a2a5e4',
+    backgroundColor: '#0d9488', // Deep Teal
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -371,20 +372,20 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#111827',
+    color: '#0f172a',
   },
   datePill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#f1f5f9',
+    borderRadius: 99,
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 99,
   },
   datePillText: {
     fontSize: 13,
-    color: '#4b5563',
-    fontWeight: '500',
+    color: '#475569',
+    fontWeight: '600',
     marginLeft: 8,
   },
 
@@ -402,11 +403,11 @@ const styles = StyleSheet.create({
 
   workedCard: {
     backgroundColor: '#fff',
-    borderRadius: 16,
     padding: 24,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
-    ...(Platform.OS === 'web' ? { boxShadow: '0px 4px 15px rgba(0,0,0,0.02)' } : {}),
+    borderColor: '#f1f5f9',
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 4px 20px rgba(0,0,0,0.03)' } : {}),
   },
   workedCardHeader: {
     flexDirection: 'row',
@@ -415,9 +416,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   workedCardTitle: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
-    color: '#6366f1',
+    color: '#0d9488',
     letterSpacing: 1,
   },
   liveDot: {
@@ -429,7 +430,7 @@ const styles = StyleSheet.create({
   workedTimeText: {
     fontSize: 54,
     fontWeight: '800',
-    color: '#1e293b',
+    color: '#0f172a',
     fontVariant: ['tabular-nums'],
     letterSpacing: -1,
     marginBottom: 16,
@@ -441,17 +442,20 @@ const styles = StyleSheet.create({
   statusInfoText: {
     marginLeft: 8,
     fontSize: 14,
-    color: '#6b7280',
+    color: '#64748b',
     fontWeight: '500',
   },
 
   timestampsCard: {
-    backgroundColor: '#f8fafc',
-    borderRadius: 16,
+    backgroundColor: '#fff',
     padding: 24,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#f1f5f9',
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 4px 20px rgba(0,0,0,0.03)' } : {}),
   },
   timestampsTitle: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
     color: '#64748b',
     letterSpacing: 1,
@@ -465,36 +469,36 @@ const styles = StyleSheet.create({
   timestampPill: {
     flex: 1,
     minWidth: '45%',
-    backgroundColor: '#fff',
-    borderRadius: 12,
+    backgroundColor: '#f8fafc',
     padding: 16,
+    borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'baseline',
     gap: 8,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: '#e2e8f0',
   },
   pillLabel: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#9ca3af',
+    color: '#94a3b8',
   },
   pillValue: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#1e293b',
+    color: '#0f172a',
   },
 
   actionsCard: {
     backgroundColor: '#fff',
-    borderRadius: 16,
     padding: 24,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
-    ...(Platform.OS === 'web' ? { boxShadow: '0px 4px 15px rgba(0,0,0,0.02)' } : {}),
+    borderColor: '#f1f5f9',
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 4px 20px rgba(0,0,0,0.03)' } : {}),
   },
   actionsTitle: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
     color: '#64748b',
     letterSpacing: 1,
@@ -504,7 +508,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 16,
-    marginBottom: 24,
   },
   actionBtn: {
     flex: 1,
@@ -513,7 +516,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    ...(Platform.OS === 'web' ? { boxShadow: '0px 8px 20px rgba(0,0,0,0.1)' } : { elevation: 4 }),
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 8px 20px rgba(0,0,0,0.08)' } : { elevation: 4 }),
   },
   actionBtnDisabled: {
     opacity: 0.4,
@@ -526,25 +529,17 @@ const styles = StyleSheet.create({
   },
 
   smartActionsAlert: {
-    flexDirection: 'row',
-    backgroundColor: '#fef3c7',
-    padding: 16,
-    borderRadius: 12,
-    alignItems: 'flex-start',
-    gap: 12,
+    display: 'none',
   },
   smartActionsText: {
-    flex: 1,
-    fontSize: 13,
-    color: '#92400e',
-    lineHeight: 20,
+    display: 'none',
   },
 
   errorBanner: {
     backgroundColor: '#fef2f2',
     padding: 16,
-    borderRadius: 12,
     marginBottom: 24,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: '#fecaca',
   },
@@ -563,18 +558,18 @@ const styles = StyleSheet.create({
 
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.6)',
+    backgroundColor: 'rgba(15, 23, 42, 0.5)',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
   },
   modalContainer: {
     backgroundColor: '#fff',
+    padding: 32,
     borderRadius: 24,
-    padding: 24,
     width: '100%',
     maxWidth: 400,
-    ...(Platform.OS === 'web' ? { boxShadow: '0px 10px 40px rgba(0,0,0,0.2)' } : { elevation: 10 }),
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 10px 40px rgba(0,0,0,0.1)' } : { elevation: 10 }),
   },
   modalHeader: {
     flexDirection: 'row',
@@ -585,7 +580,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: '800',
-    color: '#1e293b',
+    color: '#0f172a',
   },
   modalMessage: {
     fontSize: 15,
@@ -601,8 +596,8 @@ const styles = StyleSheet.create({
   modalBtnCancel: {
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 12,
     backgroundColor: '#f1f5f9',
+    borderRadius: 12,
   },
   modalBtnCancelText: {
     fontSize: 15,
@@ -612,8 +607,8 @@ const styles = StyleSheet.create({
   modalBtnConfirm: {
     paddingVertical: 12,
     paddingHorizontal: 20,
+    backgroundColor: '#0d9488', // Teal matches theme
     borderRadius: 12,
-    backgroundColor: '#6366f1',
   },
   modalBtnConfirmText: {
     fontSize: 15,
