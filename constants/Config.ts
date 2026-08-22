@@ -1,10 +1,13 @@
 import { Platform } from 'react-native';
 
 const getBaseUrl = () => {
-  if (Platform.OS === 'web') {
-    return 'http://localhost/time_system/time';
+  if (__DEV__) {
+    if (Platform.OS === 'web') {
+      return 'http://localhost/time_system/time';
+    }
+    return 'http://10.0.2.2/time_system/time';
   }
-  return 'http://10.0.2.2/time_system/time';
+  return 'https://time.usintellix.com';
 };
 
 export const BASE_URL = getBaseUrl();
