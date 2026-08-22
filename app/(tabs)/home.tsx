@@ -38,6 +38,8 @@ export default function HomeScreen() {
     error,
     punch,
     fetchStatus,
+    isOffline,
+    isSyncing,
   } = useAttendance();
 
   const { width } = useWindowDimensions();
@@ -250,6 +252,19 @@ export default function HomeScreen() {
               </Text>
             </View>
           </View>
+
+          {isOffline && (
+            <View style={[styles.errorBanner, { backgroundColor: '#fef3c7', borderColor: '#fde68a', marginBottom: 16 }]}>
+              <Text style={[styles.errorText, { color: '#92400e' }]}>⚠ You are offline. Punches will be saved locally and synced later.</Text>
+            </View>
+          )}
+
+          {isSyncing && (
+            <View style={[styles.errorBanner, { backgroundColor: '#e0f2fe', borderColor: '#bae6fd', marginBottom: 16, flexDirection: 'row', alignItems: 'center', gap: 8 }]}>
+              <ActivityIndicator size="small" color="#0369a1" />
+              <Text style={[styles.errorText, { color: '#0369a1' }]}>Syncing offline punches to server...</Text>
+            </View>
+          )}
 
           {error ? (
             <View style={styles.errorBanner}>
