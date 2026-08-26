@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -6,14 +6,9 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-  TextInput,
-  ActivityIndicator,
-  Modal,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '../../hooks/useAuth';
-import { BASE_URL } from '../../constants/Config';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ROLE_COLORS: Record<string, { bg: string; text: string }> = {
   superadmin: { bg: '#fdf4ff', text: '#a21caf' },
@@ -21,13 +16,8 @@ const ROLE_COLORS: Record<string, { bg: string; text: string }> = {
   employee:   { bg: '#ecfdf5', text: '#059669' },
 };
 
-const STORAGE_KEY_URL = 'shift_base_url';
-
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
-  const [showUrlModal, setShowUrlModal] = useState(false);
-  const [urlInput, setUrlInput] = useState(BASE_URL);
-  const [savingUrl, setSavingUrl] = useState(false);
 
   const roleConfig = ROLE_COLORS[user?.role ?? 'employee'] ?? ROLE_COLORS.employee;
 
@@ -40,19 +30,6 @@ export default function ProfileScreen() {
         { text: 'Sign Out', style: 'destructive', onPress: logout },
       ]
     );
-  };
-
-  const saveServerUrl = async () => {
-    const trimmed = urlInput.trim().replace(/\/$/, '');
-    if (!trimmed.startsWith('http')) {
-      Alert.alert('Invalid URL', 'URL must start with http:// or https://');
-      return;
-    }
-    setSavingUrl(true);
-    await AsyncStorage.setItem(STORAGE_KEY_URL, trimmed);
-    setSavingUrl(false);
-    setShowUrlModal(false);
-    Alert.alert('Saved', 'Server URL updated. Restart the app to apply changes.');
   };
 
   const InfoRow = ({ label, value }: { label: string; value: string }) => (
@@ -121,12 +98,6 @@ export default function ProfileScreen() {
           <Text style={styles.sectionLabel}>SETTINGS</Text>
           <View style={styles.card}>
             <MenuButton
-              emoji="🌐"
-              label="Server URL"
-              onPress={() => setShowUrlModal(true)}
-            />
-            <View style={styles.divider} />
-            <MenuButton
               emoji="🔴"
               label="Sign Out"
               onPress={handleLogout}
@@ -138,42 +109,6 @@ export default function ProfileScreen() {
         <Text style={styles.versionText}>SHIFT Mobile App · v1.0.0</Text>
         <View style={{ height: 40 }} />
       </ScrollView>
-
-      {/* Server URL Modal */}
-      <Modal visible={showUrlModal} animationType="slide" presentationStyle="formSheet">
-        <View style={styles.modal}>
-          <View style={styles.modalHeader}>
-            <TouchableOpacity onPress={() => setShowUrlModal(false)}>
-              <Text style={styles.modalCancel}>Cancel</Text>
-            </TouchableOpacity>
-            <Text style={styles.modalTitle}>Server URL</Text>
-            <TouchableOpacity onPress={saveServerUrl} disabled={savingUrl}>
-              {savingUrl ? (
-                <ActivityIndicator size="small" color="#4f46e5" />
-              ) : (
-                <Text style={styles.modalSave}>Save</Text>
-              )}
-            </TouchableOpacity>
-          </View>
-          <View style={styles.modalBody}>
-            <Text style={styles.urlHint}>
-              Change this if you need to connect to a different server.{'\n'}
-              Android emulator: http://10.0.2.2/time{'\n'}
-              Real device: http://192.168.x.x/time
-            </Text>
-            <TextInput
-              style={styles.urlInput}
-              value={urlInput}
-              onChangeText={setUrlInput}
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="url"
-              placeholder="http://10.0.2.2/time"
-              placeholderTextColor="#94a3b8"
-            />
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
