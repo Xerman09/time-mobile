@@ -82,6 +82,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   }, []);
 
+  useEffect(() => {
+    const { DeviceEventEmitter } = require('react-native');
+    const sub = DeviceEventEmitter.addListener('SESSION_EXPIRED', () => {
+      logout();
+    });
+    return () => sub.remove();
+  }, [logout]);
+
   const isAdmin = user?.role === 'admin' || user?.role === 'superadmin';
   const isSuperAdmin = user?.role === 'superadmin';
 

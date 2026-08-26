@@ -63,7 +63,20 @@ export async function apiFetch<T = unknown>(
 
   const text = await res.text();
   try {
-    return JSON.parse(text) as ApiResponse<T>;
+    const parsed = JSON.parse(text) as ApiResponse<T>;
+    if (!parsed.success && parsed.error) {
+      const e = parsed.error.toLowerCase();
+      if (
+        e.includes('not authenticated') ||
+        e.includes('unauthorized access') ||
+        e.includes('branch missing') ||
+        e.includes('please log in')
+      ) {
+        const { DeviceEventEmitter } = require('react-native');
+        DeviceEventEmitter.emit('SESSION_EXPIRED');
+      }
+    }
+    return parsed;
   } catch {
     return { success: false, error: `Server returned non-JSON: ${text.slice(0, 200)}` };
   }
