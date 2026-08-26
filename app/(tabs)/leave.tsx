@@ -11,8 +11,10 @@ import {
   ActivityIndicator,
   Alert,
   RefreshControl,
+  Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { Feather } from '@expo/vector-icons';
 import { apiGet, apiPost } from '../../lib/api';
 import { ENDPOINTS } from '../../constants/Config';
 import { useAuth } from '../../hooks/useAuth';
@@ -126,7 +128,7 @@ export default function LeaveScreen() {
           </View>
         </View>
         <Text style={styles.leaveDates}>
-          📅 {item.date_from} → {item.date_to}
+          <Feather name="calendar" size={13} color="#64748b" /> {item.date_from} → {item.date_to}
         </Text>
         <Text style={styles.leaveReason}>{item.reason}</Text>
         {item.approver_name ? (
@@ -165,7 +167,7 @@ export default function LeaveScreen() {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#6366f1" />}
           ListEmptyComponent={
             <View style={styles.empty}>
-              <Text style={styles.emptyEmoji}>🌴</Text>
+              <Feather name="umbrella" size={52} color="#cbd5e1" style={styles.emptyIcon} />
               <Text style={styles.emptyText}>No leave requests yet.</Text>
               <Text style={styles.emptySub}>Tap "+ New" to file a request.</Text>
             </View>
@@ -271,11 +273,13 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingHorizontal: 18,
     paddingVertical: 10,
-    shadowColor: '#4f46e5',
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 4,
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 4px 8px rgba(79, 70, 229, 0.3)' } : {
+      shadowColor: '#4f46e5',
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 4,
+    }),
   },
   addBtnText: { color: '#fff', fontWeight: '700', fontSize: 14 },
 
@@ -289,11 +293,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: 1,
     borderColor: '#f1f5f9',
-    shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.04)' } : {
+      shadowColor: '#000',
+      shadowOpacity: 0.04,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    }),
   },
   leaveTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
   leaveType: { fontSize: 16, fontWeight: '700', color: '#1e293b' },
@@ -304,7 +310,7 @@ const styles = StyleSheet.create({
   leaveApprover: { fontSize: 12, color: '#94a3b8', marginTop: 8 },
 
   empty: { alignItems: 'center', paddingTop: 80 },
-  emptyEmoji: { fontSize: 52, marginBottom: 12 },
+  emptyIcon: { marginBottom: 12 },
   emptyText: { fontSize: 17, fontWeight: '700', color: '#64748b' },
   emptySub: { fontSize: 13, color: '#94a3b8', marginTop: 4 },
 
@@ -356,11 +362,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 28,
-    shadowColor: '#4f46e5',
-    shadowOpacity: 0.35,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 6,
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 6px 12px rgba(79, 70, 229, 0.35)' } : {
+      shadowColor: '#4f46e5',
+      shadowOpacity: 0.35,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 6,
+    }),
   },
   submitBtnDisabled: { opacity: 0.7 },
   submitBtnText: { color: '#fff', fontWeight: '700', fontSize: 16 },

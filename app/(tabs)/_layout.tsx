@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, Platform } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -72,11 +72,13 @@ const styles = StyleSheet.create({
     height: 80,
     paddingBottom: 12,
     paddingTop: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: -4 },
-    elevation: 10,
+    ...(Platform.OS === 'web' ? { boxShadow: '0px -4px 12px rgba(0, 0, 0, 0.06)' } : {
+      shadowColor: '#000',
+      shadowOpacity: 0.06,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: -4 },
+      elevation: 10,
+    }),
   },
   tabItem: {
     alignItems: 'center',

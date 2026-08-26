@@ -74,8 +74,9 @@ export default function SignInScreen() {
           <Text style={styles.subtitle}>Sign in to your employee dashboard</Text>
 
           {error ? (
-            <View style={styles.errorBanner}>
-              <Text style={styles.errorText}>⚠ {error}</Text>
+            <View style={[styles.errorBanner, { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }]}>
+              <Feather name="alert-triangle" size={14} color="#dc2626" />
+              <Text style={styles.errorText}>{error}</Text>
             </View>
           ) : null}
 

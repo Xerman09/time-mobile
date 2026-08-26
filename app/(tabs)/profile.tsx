@@ -6,8 +6,10 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { Feather } from '@expo/vector-icons';
 import { useAuth } from '../../hooks/useAuth';
 
 const ROLE_COLORS: Record<string, { bg: string; text: string }> = {
@@ -40,20 +42,20 @@ export default function ProfileScreen() {
   );
 
   const MenuButton = ({
-    emoji,
+    icon,
     label,
     onPress,
     danger = false,
   }: {
-    emoji: string;
+    icon: keyof typeof Feather.glyphMap;
     label: string;
     onPress: () => void;
     danger?: boolean;
   }) => (
     <TouchableOpacity style={styles.menuBtn} onPress={onPress} activeOpacity={0.7}>
-      <Text style={styles.menuEmoji}>{emoji}</Text>
+      <Feather name={icon} size={20} color={danger ? '#dc2626' : '#64748b'} style={styles.menuIcon} />
       <Text style={[styles.menuLabel, danger && styles.menuLabelDanger]}>{label}</Text>
-      <Text style={styles.menuArrow}>›</Text>
+      <Feather name="chevron-right" size={20} color="#cbd5e1" />
     </TouchableOpacity>
   );
 
@@ -98,7 +100,7 @@ export default function ProfileScreen() {
           <Text style={styles.sectionLabel}>SETTINGS</Text>
           <View style={styles.card}>
             <MenuButton
-              emoji="🔴"
+              icon="log-out"
               label="Sign Out"
               onPress={handleLogout}
               danger
@@ -132,11 +134,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 14,
-    shadowColor: '#4f46e5',
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 8,
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 8px 16px rgba(79, 70, 229, 0.4)' } : {
+      shadowColor: '#4f46e5',
+      shadowOpacity: 0.4,
+      shadowRadius: 16,
+      shadowOffset: { width: 0, height: 8 },
+      elevation: 8,
+    }),
   },
   avatarLetter: { fontSize: 32, color: '#fff', fontWeight: '800' },
   username: { fontSize: 22, fontWeight: '800', color: '#0f172a', marginBottom: 8 },
@@ -157,11 +161,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#f1f5f9',
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.04)' } : {
+      shadowColor: '#000',
+      shadowOpacity: 0.04,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    }),
   },
   infoRow: {
     flexDirection: 'row',
@@ -181,10 +187,9 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     gap: 14,
   },
-  menuEmoji: { fontSize: 20, width: 28, textAlign: 'center' },
+  menuIcon: { width: 28, textAlign: 'center' },
   menuLabel: { flex: 1, fontSize: 15, color: '#1e293b', fontWeight: '600' },
   menuLabelDanger: { color: '#dc2626' },
-  menuArrow: { fontSize: 20, color: '#cbd5e1' },
 
   versionText: {
     textAlign: 'center',

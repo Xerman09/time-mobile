@@ -65,8 +65,8 @@ export default function HomeScreen() {
     if (attendStatus === 'working') {
       const pulse = Animated.loop(
         Animated.sequence([
-          Animated.timing(pulseAnim, { toValue: 1.05, duration: 800, useNativeDriver: true }),
-          Animated.timing(pulseAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
+          Animated.timing(pulseAnim, { toValue: 1.05, duration: 800, useNativeDriver: Platform.OS !== 'web' }),
+          Animated.timing(pulseAnim, { toValue: 1, duration: 800, useNativeDriver: Platform.OS !== 'web' }),
         ])
       );
       pulse.start();
@@ -254,8 +254,9 @@ export default function HomeScreen() {
           </View>
 
           {isOffline && (
-            <View style={[styles.errorBanner, { backgroundColor: '#fef3c7', borderColor: '#fde68a', marginBottom: 16 }]}>
-              <Text style={[styles.errorText, { color: '#92400e' }]}>⚠ You are offline. Punches will be saved locally and synced later.</Text>
+            <View style={[styles.errorBanner, { backgroundColor: '#fef3c7', borderColor: '#fde68a', marginBottom: 16, flexDirection: 'row', alignItems: 'center', gap: 8 }]}>
+              <Feather name="alert-triangle" size={16} color="#92400e" />
+              <Text style={[styles.errorText, { color: '#92400e' }]}>You are offline. Punches will be saved locally and synced later.</Text>
             </View>
           )}
 
@@ -267,8 +268,9 @@ export default function HomeScreen() {
           )}
 
           {error ? (
-            <View style={styles.errorBanner}>
-              <Text style={styles.errorText}>⚠ {error}</Text>
+            <View style={[styles.errorBanner, { flexDirection: 'row', alignItems: 'center', gap: 8 }]}>
+              <Feather name="alert-triangle" size={16} color="#dc2626" />
+              <Text style={styles.errorText}>{error}</Text>
             </View>
           ) : null}
 

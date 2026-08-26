@@ -9,6 +9,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { Feather } from '@expo/vector-icons';
 import { useAttendance } from '../../hooks/useAttendance';
 import { AttendanceRow } from '../../components/AttendanceRow';
 
@@ -59,7 +60,7 @@ export default function HistoryScreen() {
           }
           ListEmptyComponent={
             <View style={styles.empty}>
-              <Text style={styles.emptyEmoji}>📋</Text>
+              <Feather name="clipboard" size={48} color="#cbd5e1" style={styles.emptyIcon} />
               <Text style={styles.emptyText}>No attendance records found.</Text>
             </View>
           }
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
 
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   empty: { alignItems: 'center', paddingTop: 60 },
-  emptyEmoji: { fontSize: 48, marginBottom: 12 },
+  emptyIcon: { marginBottom: 12 },
   emptyText: { fontSize: 15, color: '#94a3b8', fontWeight: '500' },
 
   pagination: {
