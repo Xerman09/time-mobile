@@ -1,0 +1,45 @@
+﻿{
+  "id": "76985a4c-31f5-431f-8541-e422b762b5d1",
+  "status": "IN_QUEUE",
+  "platform": "ANDROID",
+  "artifacts": {},
+  "fingerprint": {
+    "id": "01a19c83-c2fb-7021-930e-2fcae650e289",
+    "hash": "e6d30e094e5d2c75c410742cd4165ec38e03bc78"
+  },
+  "initiatingActor": {
+    "id": "fa1b1cd3-82bf-4b4e-a74f-0f75182bf0aa",
+    "displayName": "xerman09"
+  },
+  "logFiles": [],
+  "app": {
+    "id": "6357ed45-108c-4dbc-90fe-3d0407a449e3",
+    "name": "TimeSystemApp",
+    "slug": "TimeSystemApp",
+    "ownerAccount": {
+      "id": "2f8576a7-658b-40da-91b7-5fb2f0974289",
+      "name": "xerman09"
+    }
+  },
+  "updateChannel": {
+    "id": "01a19b71-6ffe-70be-8884-2090aea21eee",
+    "name": "preview"
+  },
+  "distribution": "INTERNAL",
+  "buildProfile": "preview",
+  "appIdentifier": "com.shift.timesystem",
+  "sdkVersion": "54.0.0",
+  "appVersion": "1.0.0",
+  "appBuildVersion": "4",
+  "runtime": {
+    "id": "01a19add-d648-72a4-8c96-138c8da30398",
+    "version": "1.0.0"
+  },
+  "gitCommitHash": "319dc4469750ce2a2a56c574699ff999162b87f0",
+  "gitCommitMessage": "fix the issue of ui overcrowded on the top",
+  "priority": "NORMAL",
+  "createdAt": "2026-11-02T13:48:20.508Z",
+  "updatedAt": "2026-11-02T13:48:23.391Z",
+  "expirationDate": "2026-11-16T13:48:20.563Z",
+  "isForIosSimulator": false
+}
