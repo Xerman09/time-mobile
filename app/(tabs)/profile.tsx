@@ -141,20 +141,20 @@ const styles = StyleSheet.create({
 
   header: {
     alignItems: 'center',
-    paddingTop: 70,
-    paddingBottom: 32,
+    paddingTop: 48,
+    paddingBottom: 22,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#f1f5f9',
   },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 68,
+    height: 68,
+    borderRadius: 34,
     backgroundColor: '#0c9488',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 14,
+    marginBottom: 10,
     ...(Platform.OS === 'web' ? { boxShadow: '0px 8px 16px rgba(12, 148, 136, 0.35)' } : {
       shadowColor: '#0c9488',
       shadowOpacity: 0.35,
