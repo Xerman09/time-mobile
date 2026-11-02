@@ -3,6 +3,7 @@ import { apiGet, apiPost } from '../lib/api';
 import { ENDPOINTS } from '../constants/Config';
 import { useNetInfo } from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Location from 'expo-location';
 
 export interface AttendanceRecord {
   id: number;
@@ -19,11 +20,21 @@ export interface AttendanceRecord {
   time_out_ts: number | null;
 }
 
+export interface GeoConfig {
+  track_location: number;
+  geo_lat: number | null;
+  geo_lng: number | null;
+  geo_radius: number;
+  geo_address: string | null;
+}
+
 export interface AttendanceStatus {
   tz_name: string;
   tz_offset: number;
   server_time: number;
   today: string;
+  track_location?: number;
+  geo_config?: GeoConfig;
   record: AttendanceRecord | null;
   worked_sec: number;
 }
@@ -33,6 +44,69 @@ export type PunchType = 'time_in' | 'break_in' | 'break_out' | 'time_out';
 interface PendingPunch {
   type: PunchType;
   timestamp: number;
+}
+
+async function acquireLocation(): Promise<{
+  latitude: number;
+  longitude: number;
+  accuracy?: number;
+  address?: string;
+}> {
+  try {
+    if (Location?.requestForegroundPermissionsAsync) {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        throw new Error('Location permission was denied. Please allow location access in your device settings to time in.');
+      }
+
+      const hasServices = await Location.hasServicesEnabledAsync();
+      if (!hasServices) {
+        throw new Error('Please turn on GPS / Location Services on your device before timing in.');
+      }
+
+      const pos = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+
+      const lat = Number(pos.coords.latitude.toFixed(6));
+      const lng = Number(pos.coords.longitude.toFixed(6));
+      const acc = pos.coords.accuracy ? Number(pos.coords.accuracy.toFixed(1)) : undefined;
+
+      let address: string | undefined;
+      try {
+        const rev = await Location.reverseGeocodeAsync({ latitude: lat, longitude: lng });
+        if (rev && rev[0]) {
+          address = [rev[0].street, rev[0].city, rev[0].region, rev[0].country].filter(Boolean).join(', ');
+        }
+      } catch {}
+
+      return { latitude: lat, longitude: lng, accuracy: acc, address };
+    }
+  } catch (err: any) {
+    if (err?.message?.includes('Location permission') || err?.message?.includes('GPS')) {
+      throw err;
+    }
+  }
+
+  // Web / fallback geolocation
+  const nav = typeof navigator !== 'undefined' ? (navigator as any) : null;
+  if (nav && nav.geolocation) {
+    return new Promise((resolve, reject) => {
+      nav.geolocation.getCurrentPosition(
+        (p: any) => {
+          resolve({
+            latitude: Number(p.coords.latitude.toFixed(6)),
+            longitude: Number(p.coords.longitude.toFixed(6)),
+            accuracy: p.coords.accuracy ? Number(p.coords.accuracy.toFixed(1)) : undefined,
+          });
+        },
+        (err: any) => reject(new Error('Unable to retrieve location: ' + err.message)),
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    });
+  }
+
+  throw new Error('GPS location is required to Time In. Please ensure the latest app build is installed and GPS is enabled.');
 }
 
 export function useAttendance() {
@@ -176,9 +250,33 @@ export function useAttendance() {
 
       // ONLINE HANDLING
       try {
+        const body: Record<string, unknown> = {};
+
+        // Geotagging check for Time In (or if track_location is required)
+        if (type === 'time_in') {
+          try {
+            const loc = await acquireLocation();
+            if (loc) {
+              body.latitude = loc.latitude;
+              body.longitude = loc.longitude;
+              if (loc.accuracy !== undefined) body.accuracy = loc.accuracy;
+              if (loc.address) body.address = loc.address;
+            }
+          } catch (locErr: any) {
+            // If location tracking is strictly required by the account, or if user is prompted
+            if (status?.track_location === 1) {
+              setIsPunching(false);
+              return {
+                success: false,
+                error: locErr?.message ?? 'Failed to acquire GPS location for Time In.',
+              };
+            }
+          }
+        }
+
         const res = await apiPost<AttendanceStatus>(
           `${ENDPOINTS.shift}?action=punch&type=${type}`,
-          {}
+          body
         );
         if (res.success && res.data) {
           setStatus(res.data);
@@ -192,7 +290,7 @@ export function useAttendance() {
         setIsPunching(false);
       }
     },
-    [startTicker, isOffline]
+    [startTicker, isOffline, status?.track_location]
   );
 
   const fetchHistory = useCallback(async (page = 1) => {

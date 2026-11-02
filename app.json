@@ -16,11 +16,15 @@
     },
     "android": {
       "package": "com.shift.timesystem",
-      "versionCode": 3,
+      "versionCode": 4,
       "adaptiveIcon": {
         "backgroundColor": "#ffffff",
         "foregroundImage": "./assets/android-icon-foreground.png"
       },
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ],
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -38,6 +42,12 @@
     "plugins": [
       "expo-router",
       "expo-updates",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow WorkShift to access your location to verify shift attendance within the workplace geofence."
+        }
+      ],
       [
         "expo-build-properties",
         {

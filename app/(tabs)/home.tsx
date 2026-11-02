@@ -271,6 +271,17 @@ export default function HomeScreen() {
             </View>
           </View>
 
+          {status?.track_location === 1 && (
+            <View style={styles.geoPillRow}>
+              <Feather name="map-pin" size={13} color="#0c9488" />
+              <Text style={styles.geoPillText}>
+                {status?.geo_config?.geo_address 
+                  ? `Geofence: ${status.geo_config.geo_address} (${status.geo_config.geo_radius}m)`
+                  : 'GPS Geotagging required for Time In'}
+              </Text>
+            </View>
+          )}
+
           {isOffline && (
             <View style={[styles.errorBanner, { backgroundColor: '#fef3c7', borderColor: '#fde68a', marginBottom: 16, flexDirection: 'row', alignItems: 'center', gap: 8 }]}>
               <Feather name="alert-triangle" size={16} color="#92400e" />
@@ -452,6 +463,24 @@ const styles = StyleSheet.create({
     color: '#0f766e',
     fontWeight: '600',
     marginLeft: 6,
+  },
+  geoPillRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0fdfa',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ccfbf1',
+    marginBottom: 12,
+    gap: 6,
+  },
+  geoPillText: {
+    fontSize: 12,
+    color: '#0f766e',
+    fontWeight: '600',
+    flex: 1,
   },
 
   contentGrid: {
