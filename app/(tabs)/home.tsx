@@ -13,6 +13,7 @@ import {
   Platform,
   Modal,
   Image,
+  StatusBar as RNStatusBar,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Feather } from '@expo/vector-icons';
@@ -239,7 +240,10 @@ export default function HomeScreen() {
         contentContainerStyle={[
           styles.scrollContent,
           {
-            paddingTop: Math.max(insets.top + (Platform.OS === 'web' ? 12 : 8), 16),
+            paddingTop: Math.max(
+              insets.top,
+              Platform.OS === 'android' ? (RNStatusBar.currentHeight ?? 24) : 0
+            ) + (Platform.OS === 'web' ? 12 : 12),
             paddingBottom: Math.max(insets.bottom + 16, 24),
           },
           isDesktop && styles.scrollContentDesktop,

@@ -12,6 +12,7 @@ import {
   Alert,
   RefreshControl,
   Platform,
+  StatusBar as RNStatusBar,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Feather } from '@expo/vector-icons';
@@ -140,12 +141,17 @@ export default function LeaveScreen() {
     );
   };
 
+  const safeTopPadding = Math.max(
+    insets.top,
+    Platform.OS === 'android' ? (RNStatusBar.currentHeight ?? 24) : 0
+  ) + (Platform.OS === 'web' ? 12 : 12);
+
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
 
       {/* Header */}
-      <View style={[styles.header, { paddingTop: Math.max(insets.top + (Platform.OS === 'web' ? 12 : 8), 24) }]}>
+      <View style={[styles.header, { paddingTop: safeTopPadding }]}>
         <View>
           <Text style={styles.title}>Leave Requests</Text>
           <Text style={styles.subtitle}>{leaves.length} requests</Text>

@@ -10,6 +10,7 @@ import {
   Platform,
   ActivityIndicator,
   Image,
+  StatusBar as RNStatusBar,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../hooks/useAuth';
@@ -111,7 +112,10 @@ export default function SignInScreen() {
           contentContainerStyle={[
             styles.scroll,
             {
-              paddingTop: Math.max(insets.top + (Platform.OS === 'web' ? 12 : 8), 24),
+              paddingTop: Math.max(
+                insets.top,
+                Platform.OS === 'android' ? (RNStatusBar.currentHeight ?? 24) : 0
+              ) + (Platform.OS === 'web' ? 12 : 12),
               paddingBottom: Math.max(insets.bottom + 20, 28),
             },
           ]}
