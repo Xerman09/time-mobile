@@ -403,12 +403,11 @@ const styles = StyleSheet.create({
   scroll: {
     flexGrow: 1,
     paddingHorizontal: 28,
-    paddingTop: Platform.OS === 'web' ? 24 : 16,
-    paddingBottom: 24,
+    paddingTop: Platform.OS === 'web' ? 28 : 20,
+    paddingBottom: 28,
     maxWidth: 440,
     width: '100%',
     alignSelf: 'center',
-    justifyContent: 'center',
   },
 
   iconBox: {
