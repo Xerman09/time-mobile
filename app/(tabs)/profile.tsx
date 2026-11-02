@@ -12,6 +12,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Feather } from '@expo/vector-icons';
 import { useAuth } from '../../hooks/useAuth';
 import { useAppUpdates } from '../../hooks/useAppUpdates';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ROLE_COLORS: Record<string, { bg: string; text: string }> = {
   superadmin: { bg: '#fdf4ff', text: '#a21caf' },
@@ -22,6 +23,7 @@ const ROLE_COLORS: Record<string, { bg: string; text: string }> = {
 export default function ProfileScreen() {
   const { user, logout, lockSession } = useAuth();
   const { checkForUpdates, isChecking } = useAppUpdates();
+  const insets = useSafeAreaInsets();
 
   const roleConfig = ROLE_COLORS[user?.role ?? 'employee'] ?? ROLE_COLORS.employee;
 
@@ -67,7 +69,7 @@ export default function ProfileScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Avatar + Name Header */}
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingTop: Math.max(insets.top + (Platform.OS === 'web' ? 20 : 16), 56) }]}>
           <View style={styles.avatar}>
             <Text style={styles.avatarLetter}>
               {(user?.username ?? 'U').charAt(0).toUpperCase()}

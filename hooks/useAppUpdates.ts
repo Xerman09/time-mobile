@@ -44,8 +44,12 @@ export function useAppUpdates(): AppUpdateState {
         Alert.alert('Up to Date', 'WorkShift is already running the latest version.');
       }
     } catch (err: any) {
+      console.warn('[useAppUpdates] check error:', err);
       if (manual) {
-        Alert.alert('Check Failed', err?.message ?? 'Could not check for updates.');
+        const msg = err?.message?.includes('check for update')
+          ? 'Unable to reach the update service. Please ensure you are connected to the internet and running the latest channel build.'
+          : (err?.message ?? 'Could not check for updates.');
+        Alert.alert('Update Check', msg);
       }
     } finally {
       setIsChecking(false);
