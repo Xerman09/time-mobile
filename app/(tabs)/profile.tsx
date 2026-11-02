@@ -19,7 +19,7 @@ const ROLE_COLORS: Record<string, { bg: string; text: string }> = {
 };
 
 export default function ProfileScreen() {
-  const { user, logout } = useAuth();
+  const { user, logout, lockSession } = useAuth();
 
   const roleConfig = ROLE_COLORS[user?.role ?? 'employee'] ?? ROLE_COLORS.employee;
 
@@ -97,8 +97,14 @@ export default function ProfileScreen() {
 
         {/* Settings */}
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>SETTINGS</Text>
+          <Text style={styles.sectionLabel}>SECURITY & SESSION</Text>
           <View style={styles.card}>
+            <MenuButton
+              icon="lock"
+              label="Lock Session (Quick Unlock)"
+              onPress={lockSession}
+            />
+            <View style={styles.divider} />
             <MenuButton
               icon="log-out"
               label="Sign Out"
