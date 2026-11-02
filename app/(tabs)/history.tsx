@@ -7,13 +7,16 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
+  Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Feather } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAttendance } from '../../hooks/useAttendance';
 import { AttendanceRow } from '../../components/AttendanceRow';
 
 export default function HistoryScreen() {
+  const insets = useSafeAreaInsets();
   const { history, histPage, histPages, histTotal, fetchHistory, isLoading } = useAttendance();
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState(1);
@@ -39,7 +42,7 @@ export default function HistoryScreen() {
       <StatusBar style="dark" />
 
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: Math.max(insets.top + (Platform.OS === 'web' ? 12 : 8), 24) }]}>
         <Text style={styles.title}>Attendance History</Text>
         <Text style={styles.subtitle}>{histTotal} records</Text>
       </View>
@@ -96,14 +99,13 @@ export default function HistoryScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f8fafc' },
   header: {
-    paddingTop: 60,
-    paddingBottom: 20,
+    paddingBottom: 14,
     paddingHorizontal: 20,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#f1f5f9',
   },
-  title: { fontSize: 24, fontWeight: '800', color: '#0f172a' },
+  title: { fontSize: 22, fontWeight: '800', color: '#0f172a' },
   subtitle: { fontSize: 13, color: '#94a3b8', marginTop: 2 },
 
   list: { padding: 16, paddingBottom: 40 },

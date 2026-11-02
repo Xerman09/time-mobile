@@ -69,7 +69,7 @@ export default function ProfileScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Avatar + Name Header */}
-        <View style={[styles.header, { paddingTop: Math.max(insets.top + (Platform.OS === 'web' ? 20 : 16), 56) }]}>
+        <View style={[styles.header, { paddingTop: Math.max(insets.top + (Platform.OS === 'web' ? 12 : 8), 24) }]}>
           <View style={styles.avatar}>
             <Text style={styles.avatarLetter}>
               {(user?.username ?? 'U').charAt(0).toUpperCase()}

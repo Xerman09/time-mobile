@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Feather } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { apiGet, apiPost } from '../../lib/api';
 import { ENDPOINTS } from '../../constants/Config';
 import { useAuth } from '../../hooks/useAuth';
@@ -48,6 +49,7 @@ const LEAVE_TYPES = [
 ];
 
 export default function LeaveScreen() {
+  const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -143,7 +145,7 @@ export default function LeaveScreen() {
       <StatusBar style="dark" />
 
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: Math.max(insets.top + (Platform.OS === 'web' ? 12 : 8), 24) }]}>
         <View>
           <Text style={styles.title}>Leave Requests</Text>
           <Text style={styles.subtitle}>{leaves.length} requests</Text>
@@ -256,8 +258,7 @@ export default function LeaveScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f8fafc' },
   header: {
-    paddingTop: 60,
-    paddingBottom: 20,
+    paddingBottom: 14,
     paddingHorizontal: 20,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
@@ -266,7 +267,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'space-between',
   },
-  title: { fontSize: 24, fontWeight: '800', color: '#0f172a' },
+  title: { fontSize: 22, fontWeight: '800', color: '#0f172a' },
   subtitle: { fontSize: 13, color: '#94a3b8', marginTop: 2 },
   addBtn: {
     backgroundColor: '#0c9488',

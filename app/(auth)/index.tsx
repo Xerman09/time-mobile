@@ -111,7 +111,7 @@ export default function SignInScreen() {
           contentContainerStyle={[
             styles.scroll,
             {
-              paddingTop: Math.max(insets.top + (Platform.OS === 'web' ? 24 : 16), 56),
+              paddingTop: Math.max(insets.top + (Platform.OS === 'web' ? 12 : 8), 24),
               paddingBottom: Math.max(insets.bottom + 20, 28),
             },
           ]}
@@ -417,31 +417,31 @@ const styles = StyleSheet.create({
   },
 
   iconBox: {
-    width: 58,
-    height: 58,
+    width: 48,
+    height: 48,
     backgroundColor: '#ffffff',
-    borderRadius: 16,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    marginBottom: 10,
+    marginBottom: 6,
     borderWidth: 1,
     borderColor: '#e2e8f0',
-    ...(Platform.OS === 'web' ? { boxShadow: '0px 6px 18px rgba(12, 148, 136, 0.12)' } : {
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 4px 14px rgba(12, 148, 136, 0.12)' } : {
       shadowColor: '#0c9488',
       shadowOpacity: 0.12,
-      shadowRadius: 12,
-      shadowOffset: { width: 0, height: 4 },
-      elevation: 3,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 3 },
+      elevation: 2,
     }),
   },
   brandLogo: {
-    width: 38,
-    height: 38,
+    width: 32,
+    height: 32,
   },
   brandHeader: {
     alignItems: 'center',
-    marginBottom: 14,
+    marginBottom: 8,
   },
   brandRow: {
     flexDirection: 'row',
@@ -449,13 +449,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   brandTextTeal: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '900',
     color: '#0c9488',
     letterSpacing: 1.2,
   },
   brandTextDark: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '900',
     color: '#0f172a',
     letterSpacing: 1.2,
@@ -519,17 +519,17 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '700',
     color: '#0f172a',
     textAlign: 'center',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   subtitle: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#64748b',
     textAlign: 'center',
-    marginBottom: 18,
+    marginBottom: 14,
   },
 
   errorBanner: {

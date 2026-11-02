@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Feather } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAttendance, formatDuration, formatTime, PunchType } from '../../hooks/useAttendance';
 import { useAuth } from '../../hooks/useAuth';
 import { LiveClock } from '../../components/LiveClock';
@@ -30,6 +31,7 @@ interface PunchButtonConfig {
 }
 
 export default function HomeScreen() {
+  const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const {
     status,
@@ -234,12 +236,19 @@ export default function HomeScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0c9488" />}
-        contentContainerStyle={[styles.scrollContent, isDesktop && styles.scrollContentDesktop]}
+        contentContainerStyle={[
+          styles.scrollContent,
+          {
+            paddingTop: Math.max(insets.top + (Platform.OS === 'web' ? 12 : 8), 16),
+            paddingBottom: Math.max(insets.bottom + 16, 24),
+          },
+          isDesktop && styles.scrollContentDesktop,
+        ]}
       >
         <View style={styles.mainWrapper}>
           
           {/* Header Row */}
-          <View style={[styles.headerRow, isDesktop && styles.headerRowDesktop]}>
+          <View style={styles.headerRow}>
             <View style={styles.headerLeft}>
               <View style={styles.headerIconBox}>
                 <Image
@@ -257,10 +266,8 @@ export default function HomeScreen() {
               </View>
             </View>
             <View style={styles.datePill}>
-              <Feather name="calendar" size={14} color="#0c9488" />
-              <Text style={styles.datePillText}>
-                Today ({status?.tz_name ?? 'Local'}): {todayDate}
-              </Text>
+              <Feather name="calendar" size={13} color="#0c9488" />
+              <Text style={styles.datePillText}>{todayDate}</Text>
             </View>
           </View>
 
@@ -368,16 +375,17 @@ const styles = StyleSheet.create({
   },
   
   headerRow: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    gap: 12,
-    marginBottom: 24,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
     backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 14,
     borderWidth: 1,
     borderColor: '#f1f5f9',
-    ...(Platform.OS === 'web' ? { boxShadow: '0px 4px 20px rgba(0,0,0,0.03)' } : { elevation: 2 }),
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 2px 12px rgba(0,0,0,0.03)' } : { elevation: 2 }),
   },
   headerRowDesktop: {
     flexDirection: 'row',
@@ -387,41 +395,42 @@ const styles = StyleSheet.create({
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexShrink: 1,
   },
   headerIconBox: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
+    width: 36,
+    height: 36,
+    borderRadius: 10,
     backgroundColor: '#ffffff',
     borderWidth: 1,
     borderColor: '#e2e8f0',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
-    ...(Platform.OS === 'web' ? { boxShadow: '0px 2px 8px rgba(12, 148, 136, 0.1)' } : { elevation: 2 }),
+    marginRight: 10,
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 2px 6px rgba(12, 148, 136, 0.1)' } : { elevation: 1 }),
   },
   headerLogo: {
-    width: 32,
-    height: 32,
+    width: 26,
+    height: 26,
   },
   headerBrandRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   headerBrandTeal: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '900',
     color: '#0c9488',
     letterSpacing: 0.5,
   },
   headerBrandDark: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '900',
     color: '#0f172a',
     letterSpacing: 0.5,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: '800',
     color: '#0f172a',
     marginTop: -2,
@@ -429,16 +438,20 @@ const styles = StyleSheet.create({
   datePill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f1f5f9',
-    borderRadius: 99,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    backgroundColor: '#f0fdfa',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ccfbf1',
+    flexShrink: 0,
+    marginLeft: 8,
   },
   datePillText: {
-    fontSize: 13,
-    color: '#475569',
+    fontSize: 12,
+    color: '#0f766e',
     fontWeight: '600',
-    marginLeft: 8,
+    marginLeft: 6,
   },
 
   contentGrid: {
