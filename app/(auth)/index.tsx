@@ -47,9 +47,6 @@ export default function SignInScreen() {
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
-      
-      {/* Top light teal background */}
-      <View style={styles.topBg} />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -199,48 +196,44 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
   },
-  topBg: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 180,
-    backgroundColor: '#ebf7f6',
-  },
   flex: { flex: 1 },
   scroll: {
     flexGrow: 1,
-    paddingHorizontal: 32,
-    paddingTop: 140,
-    paddingBottom: 40,
+    paddingHorizontal: 28,
+    paddingTop: Platform.OS === 'web' ? 24 : 16,
+    paddingBottom: 24,
+    maxWidth: 440,
+    width: '100%',
+    alignSelf: 'center',
+    justifyContent: 'center',
   },
 
   iconBox: {
-    width: 68,
-    height: 68,
+    width: 58,
+    height: 58,
     backgroundColor: '#ffffff',
-    borderRadius: 18,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    marginBottom: 16,
+    marginBottom: 10,
     borderWidth: 1,
     borderColor: '#e2e8f0',
-    ...(Platform.OS === 'web' ? { boxShadow: '0px 10px 25px rgba(12, 148, 136, 0.12)' } : {
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 6px 18px rgba(12, 148, 136, 0.12)' } : {
       shadowColor: '#0c9488',
       shadowOpacity: 0.12,
-      shadowRadius: 16,
-      shadowOffset: { width: 0, height: 6 },
-      elevation: 4,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 3,
     }),
   },
   brandLogo: {
-    width: 44,
-    height: 44,
+    width: 38,
+    height: 38,
   },
   brandHeader: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 14,
   },
   brandRow: {
     flexDirection: 'row',
@@ -251,65 +244,67 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '900',
     color: '#0c9488',
-    letterSpacing: 1.5,
+    letterSpacing: 1.2,
   },
   brandTextDark: {
     fontSize: 20,
     fontWeight: '900',
     color: '#0f172a',
-    letterSpacing: 1.5,
+    letterSpacing: 1.2,
   },
   brandTagline: {
-    fontSize: 9.5,
+    fontSize: 9,
     fontWeight: '700',
     color: '#64748b',
     letterSpacing: 1.2,
-    marginTop: 4,
+    marginTop: 2,
   },
 
   title: {
-    fontSize: 28,
-    fontWeight: '600',
-    color: '#111827',
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#0f172a',
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 4,
   },
   subtitle: {
-    fontSize: 15,
-    color: '#6b7280',
+    fontSize: 13,
+    color: '#64748b',
     textAlign: 'center',
-    marginBottom: 36,
+    marginBottom: 20,
   },
 
   errorBanner: {
     backgroundColor: '#fef2f2',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 20,
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#fee2e2',
   },
   errorText: { color: '#dc2626', fontSize: 13, textAlign: 'center', fontWeight: '500' },
 
   fieldGroup: {
-    marginBottom: 20,
+    marginBottom: 14,
   },
   labelRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   label: {
-    fontSize: 11,
+    fontSize: 10.5,
     fontWeight: '700',
-    color: '#9ca3af',
+    color: '#64748b',
     letterSpacing: 0.5,
-    marginBottom: 8,
+    marginBottom: 6,
   },
   forgotText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '600',
-    color: '#0d9488',
-    marginBottom: 8,
+    color: '#0c9488',
+    marginBottom: 6,
   },
   inputWrapper: {
     flexDirection: 'row',
@@ -318,29 +313,29 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e2e8f0',
     borderRadius: 12,
-    height: 52,
-    paddingHorizontal: 16,
+    height: 48,
+    paddingHorizontal: 14,
   },
   inputIcon: {
-    marginRight: 12,
+    marginRight: 10,
   },
   input: {
     flex: 1,
-    fontSize: 15,
-    color: '#111827',
+    fontSize: 14,
+    color: '#0f172a',
     height: '100%',
   },
   eyeBtn: {
-    padding: 8,
+    padding: 6,
   },
 
   loginBtn: {
     backgroundColor: '#0c9488',
-    height: 54,
+    height: 48,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 12,
+    marginTop: 8,
   },
   disabledBtn: {
     opacity: 0.7,
@@ -351,29 +346,29 @@ const styles = StyleSheet.create({
   },
   loginBtnText: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
   },
   btnArrow: {
     marginLeft: 8,
-    marginTop: 2,
+    marginTop: 1,
   },
 
   dividerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 24,
+    marginVertical: 18,
   },
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#e5e7eb',
+    backgroundColor: '#f1f5f9',
   },
   dividerText: {
     color: '#9ca3af',
-    fontSize: 12,
-    fontWeight: '600',
-    paddingHorizontal: 16,
+    fontSize: 11,
+    fontWeight: '700',
+    paddingHorizontal: 14,
   },
 
   biometricBtn: {
@@ -383,29 +378,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0fdfa',
     borderWidth: 1,
     borderColor: '#ccfbf1',
-    height: 54,
+    height: 48,
     borderRadius: 12,
-    marginBottom: 40,
+    marginBottom: 20,
   },
   biometricText: {
     color: '#0f766e',
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '600',
-    marginLeft: 10,
+    marginLeft: 8,
   },
 
   footerRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingBottom: 16,
   },
   footerText: {
-    color: '#9ca3af',
-    fontSize: 14,
+    color: '#94a3b8',
+    fontSize: 13,
   },
   footerLink: {
-    color: '#0d9488',
-    fontSize: 14,
-    fontWeight: '600',
+    color: '#0c9488',
+    fontSize: 13,
+    fontWeight: '700',
   },
 });
