@@ -15,6 +15,7 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '../../hooks/useAuth';
 import { StatusBar } from 'expo-status-bar';
 import { Feather } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function SignInScreen() {
   const {
@@ -27,6 +28,7 @@ export default function SignInScreen() {
     sessionActive,
   } = useAuth();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   // If there is a remembered user and the session hasn't ended (or rememberMe is on),
   // default to Quick Unlock mode.
@@ -106,7 +108,13 @@ export default function SignInScreen() {
         style={styles.flex}
       >
         <ScrollView
-          contentContainerStyle={styles.scroll}
+          contentContainerStyle={[
+            styles.scroll,
+            {
+              paddingTop: Math.max(insets.top + (Platform.OS === 'web' ? 24 : 16), 56),
+              paddingBottom: Math.max(insets.bottom + 20, 28),
+            },
+          ]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -403,8 +411,6 @@ const styles = StyleSheet.create({
   scroll: {
     flexGrow: 1,
     paddingHorizontal: 28,
-    paddingTop: Platform.OS === 'web' ? 28 : 20,
-    paddingBottom: 28,
     maxWidth: 440,
     width: '100%',
     alignSelf: 'center',
