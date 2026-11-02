@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../hooks/useAuth';
@@ -59,15 +60,22 @@ export default function SignInScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Icon Box */}
+          {/* Official Brand Icon / Emblem */}
           <View style={styles.iconBox}>
-            <Feather name="briefcase" size={26} color="#0d9488" />
+            <Image
+              source={require('../../assets/logo.png')}
+              style={styles.brandLogo}
+              resizeMode="contain"
+            />
           </View>
 
           {/* Brand Header */}
-          <View style={styles.brandRow}>
-            <Text style={styles.brandTextTeal}>SHIFT</Text>
-            <Text style={styles.brandTextDark}> MOBILE</Text>
+          <View style={styles.brandHeader}>
+            <View style={styles.brandRow}>
+              <Text style={styles.brandTextTeal}>WORK</Text>
+              <Text style={styles.brandTextDark}>SHIFT</Text>
+            </View>
+            <Text style={styles.brandTagline}>WORKFORCE & SHIFT ATTENDANCE</Text>
           </View>
 
           <Text style={styles.title}>Welcome back</Text>
@@ -208,33 +216,55 @@ const styles = StyleSheet.create({
   },
 
   iconBox: {
-    width: 64,
-    height: 64,
+    width: 68,
+    height: 68,
     backgroundColor: '#ffffff',
-    borderRadius: 16,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 10px 25px rgba(12, 148, 136, 0.12)' } : {
+      shadowColor: '#0c9488',
+      shadowOpacity: 0.12,
+      shadowRadius: 16,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 4,
+    }),
+  },
+  brandLogo: {
+    width: 44,
+    height: 44,
+  },
+  brandHeader: {
+    alignItems: 'center',
     marginBottom: 20,
-    boxShadow: '0px 10px 25px rgba(0,0,0,0.06)',
-    elevation: 4,
   },
   brandRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 24,
+    alignItems: 'center',
   },
   brandTextTeal: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '900',
-    color: '#0d9488',
+    color: '#0c9488',
     letterSpacing: 1.5,
   },
   brandTextDark: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '900',
-    color: '#111827',
+    color: '#0f172a',
     letterSpacing: 1.5,
+  },
+  brandTagline: {
+    fontSize: 9.5,
+    fontWeight: '700',
+    color: '#64748b',
+    letterSpacing: 1.2,
+    marginTop: 4,
   },
 
   title: {
@@ -284,8 +314,10 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f3f4f6',
-    borderRadius: 6,
+    backgroundColor: '#f8fafc',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 12,
     height: 52,
     paddingHorizontal: 16,
   },
@@ -303,9 +335,9 @@ const styles = StyleSheet.create({
   },
 
   loginBtn: {
-    backgroundColor: '#0f172a',
-    height: 56,
-    borderRadius: 6,
+    backgroundColor: '#0c9488',
+    height: 54,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 12,
@@ -348,13 +380,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f3f4f6',
-    height: 56,
-    borderRadius: 6,
+    backgroundColor: '#f0fdfa',
+    borderWidth: 1,
+    borderColor: '#ccfbf1',
+    height: 54,
+    borderRadius: 12,
     marginBottom: 40,
   },
   biometricText: {
-    color: '#111827',
+    color: '#0f766e',
     fontSize: 15,
     fontWeight: '600',
     marginLeft: 10,

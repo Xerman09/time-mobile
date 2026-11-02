@@ -108,7 +108,8 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        <Text style={styles.versionText}>SHIFT Mobile App · v1.0.0</Text>
+        <Text style={styles.versionText}>WorkShift Mobile App · v1.0.0</Text>
+        <Text style={styles.versionSub}>Workforce & Shift Attendance</Text>
         <View style={{ height: 40 }} />
       </ScrollView>
     </View>
@@ -130,13 +131,13 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#4f46e5',
+    backgroundColor: '#0c9488',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 14,
-    ...(Platform.OS === 'web' ? { boxShadow: '0px 8px 16px rgba(79, 70, 229, 0.4)' } : {
-      shadowColor: '#4f46e5',
-      shadowOpacity: 0.4,
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 8px 16px rgba(12, 148, 136, 0.35)' } : {
+      shadowColor: '#0c9488',
+      shadowOpacity: 0.35,
       shadowRadius: 16,
       shadowOffset: { width: 0, height: 8 },
       elevation: 8,
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: { fontSize: 17, fontWeight: '700', color: '#0f172a' },
   modalCancel: { color: '#94a3b8', fontSize: 16 },
-  modalSave: { color: '#4f46e5', fontSize: 16, fontWeight: '700' },
+  modalSave: { color: '#0c9488', fontSize: 16, fontWeight: '700' },
   modalBody: { padding: 20 },
   urlHint: {
     fontSize: 13,
@@ -231,5 +232,13 @@ const styles = StyleSheet.create({
     padding: 14,
     fontSize: 15,
     color: '#1e293b',
+  },
+  versionSub: {
+    textAlign: 'center',
+    color: '#94a3b8',
+    fontSize: 11,
+    fontWeight: '600',
+    marginTop: 4,
+    letterSpacing: 0.5,
   },
 });

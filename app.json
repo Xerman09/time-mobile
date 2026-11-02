@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "SHIFT",
+    "name": "WorkShift",
     "slug": "TimeSystemApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "shift",
+    "scheme": "workshift",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
@@ -17,7 +17,7 @@
     "android": {
       "package": "com.shift.timesystem",
       "adaptiveIcon": {
-        "backgroundColor": "#4f46e5",
+        "backgroundColor": "#0c9488",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"

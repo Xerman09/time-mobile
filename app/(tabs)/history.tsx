@@ -46,7 +46,7 @@ export default function HistoryScreen() {
 
       {isLoading && !refreshing ? (
         <View style={styles.centered}>
-          <ActivityIndicator size="large" color="#6366f1" />
+          <ActivityIndicator size="large" color="#0c9488" />
         </View>
       ) : (
         <FlatList
@@ -56,7 +56,7 @@ export default function HistoryScreen() {
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#6366f1" />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0c9488" />
           }
           ListEmptyComponent={
             <View style={styles.empty}>
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   pageBtn: {
-    backgroundColor: '#4f46e5',
+    backgroundColor: '#0c9488',
     paddingHorizontal: 18,
     paddingVertical: 10,
     borderRadius: 12,

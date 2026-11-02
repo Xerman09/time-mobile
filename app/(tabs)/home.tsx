@@ -12,6 +12,7 @@ import {
   useWindowDimensions,
   Platform,
   Modal,
+  Image,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Feather } from '@expo/vector-icons';
@@ -119,28 +120,28 @@ export default function HomeScreen() {
         type: 'time_in',
         label: 'Time In',
         icon: 'log-in',
-        color: '#2dd4bf', // Teal-400 (Matches ATECH Mobile theme)
+        color: '#0c9488', // Brand Teal
         available: !record || !record.time_in,
       },
       {
         type: 'break_in',
         label: 'Break In',
         icon: 'coffee',
-        color: '#fbbf24', // Amber-400
+        color: '#d97706', // Brand Amber
         available: !!(record?.time_in && !record.time_out && !record.break_in),
       },
       {
         type: 'break_out',
         label: 'Break Out',
         icon: 'user-check',
-        color: '#a78bfa', // Violet-400
+        color: '#0284c7', // Brand Sky
         available: !!(record?.break_in && !record.break_out && !record.time_out),
       },
       {
         type: 'time_out',
         label: 'Time Out',
         icon: 'log-out',
-        color: '#f87171', // Red-400
+        color: '#ef4444', // Brand Rose Red
         available: !!(record?.time_in && !record.time_out),
       },
     ];
@@ -232,7 +233,7 @@ export default function HomeScreen() {
       <StatusBar style="dark" />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#6366f1" />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0c9488" />}
         contentContainerStyle={[styles.scrollContent, isDesktop && styles.scrollContentDesktop]}
       >
         <View style={styles.mainWrapper}>
@@ -241,12 +242,22 @@ export default function HomeScreen() {
           <View style={[styles.headerRow, isDesktop && styles.headerRowDesktop]}>
             <View style={styles.headerLeft}>
               <View style={styles.headerIconBox}>
-                <Feather name="clock" size={20} color="#fff" />
+                <Image
+                  source={require('../../assets/logo.png')}
+                  style={styles.headerLogo}
+                  resizeMode="contain"
+                />
               </View>
-              <Text style={styles.headerTitle}>Shift Attendance</Text>
+              <View>
+                <View style={styles.headerBrandRow}>
+                  <Text style={styles.headerBrandTeal}>Work</Text>
+                  <Text style={styles.headerBrandDark}>Shift</Text>
+                </View>
+                <Text style={styles.headerTitle}>Shift Attendance</Text>
+              </View>
             </View>
             <View style={styles.datePill}>
-              <Feather name="calendar" size={14} color="#6b7280" />
+              <Feather name="calendar" size={14} color="#0c9488" />
               <Text style={styles.datePillText}>
                 Today ({status?.tz_name ?? 'Local'}): {todayDate}
               </Text>
@@ -299,7 +310,7 @@ export default function HomeScreen() {
 
       {isLoading && !refreshing ? (
         <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color="#6366f1" />
+          <ActivityIndicator size="large" color="#0c9488" />
         </View>
       ) : null}
 
@@ -308,7 +319,7 @@ export default function HomeScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <View style={styles.modalHeader}>
-              <Feather name={modalConfig.type === 'error' ? 'alert-circle' : 'help-circle'} size={24} color={modalConfig.type === 'error' ? '#ef4444' : '#6366f1'} />
+              <Feather name={modalConfig.type === 'error' ? 'alert-circle' : 'help-circle'} size={24} color={modalConfig.type === 'error' ? '#ef4444' : '#0c9488'} />
               <Text style={styles.modalTitle}>{modalConfig.title}</Text>
             </View>
             <Text style={styles.modalMessage}>{modalConfig.message}</Text>
@@ -378,18 +389,42 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerIconBox: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: 12,
-    backgroundColor: '#0d9488', // Deep Teal
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 2px 8px rgba(12, 148, 136, 0.1)' } : { elevation: 2 }),
+  },
+  headerLogo: {
+    width: 32,
+    height: 32,
+  },
+  headerBrandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerBrandTeal: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#0c9488',
+    letterSpacing: 0.5,
+  },
+  headerBrandDark: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#0f172a',
+    letterSpacing: 0.5,
   },
   headerTitle: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: '800',
     color: '#0f172a',
+    marginTop: -2,
   },
   datePill: {
     flexDirection: 'row',

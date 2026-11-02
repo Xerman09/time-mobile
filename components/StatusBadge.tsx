@@ -12,7 +12,7 @@ const CONFIG: Record<StatusType, { label: string; bg: string; text: string; dot:
   not_started: { label: 'Not Started', bg: '#f1f5f9', text: '#64748b', dot: '#94a3b8' },
   working:     { label: 'Working',     bg: '#ecfdf5', text: '#059669', dot: '#10b981' },
   on_break:    { label: 'On Break',    bg: '#fffbeb', text: '#d97706', dot: '#f59e0b' },
-  done:        { label: 'Shift Done',  bg: '#eff6ff', text: '#2563eb', dot: '#6366f1' },
+  done:        { label: 'Shift Done',  bg: '#f0fdfa', text: '#0f766e', dot: '#0d9488' },
 };
 
 export function deriveStatus(record: {

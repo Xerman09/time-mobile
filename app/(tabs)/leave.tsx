@@ -155,7 +155,7 @@ export default function LeaveScreen() {
 
       {isLoading ? (
         <View style={styles.centered}>
-          <ActivityIndicator size="large" color="#6366f1" />
+          <ActivityIndicator size="large" color="#0c9488" />
         </View>
       ) : (
         <FlatList
@@ -164,7 +164,7 @@ export default function LeaveScreen() {
           renderItem={renderLeave}
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#6366f1" />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0c9488" />}
           ListEmptyComponent={
             <View style={styles.empty}>
               <Feather name="umbrella" size={52} color="#cbd5e1" style={styles.emptyIcon} />
@@ -269,12 +269,12 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: '800', color: '#0f172a' },
   subtitle: { fontSize: 13, color: '#94a3b8', marginTop: 2 },
   addBtn: {
-    backgroundColor: '#4f46e5',
+    backgroundColor: '#0c9488',
     borderRadius: 14,
     paddingHorizontal: 18,
     paddingVertical: 10,
-    ...(Platform.OS === 'web' ? { boxShadow: '0px 4px 8px rgba(79, 70, 229, 0.3)' } : {
-      shadowColor: '#4f46e5',
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 4px 8px rgba(12, 148, 136, 0.3)' } : {
+      shadowColor: '#0c9488',
       shadowOpacity: 0.3,
       shadowRadius: 8,
       shadowOffset: { width: 0, height: 4 },
@@ -351,19 +351,19 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: 'transparent',
   },
-  typeChipActive: { backgroundColor: '#ede9fe', borderColor: '#6366f1' },
+  typeChipActive: { backgroundColor: '#f0fdfa', borderColor: '#0c9488' },
   typeChipText: { fontSize: 13, fontWeight: '600', color: '#64748b' },
-  typeChipTextActive: { color: '#4f46e5' },
+  typeChipTextActive: { color: '#0c9488' },
 
   submitBtn: {
-    backgroundColor: '#4f46e5',
+    backgroundColor: '#0c9488',
     borderRadius: 16,
     height: 54,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 28,
-    ...(Platform.OS === 'web' ? { boxShadow: '0px 6px 12px rgba(79, 70, 229, 0.35)' } : {
-      shadowColor: '#4f46e5',
+    ...(Platform.OS === 'web' ? { boxShadow: '0px 6px 12px rgba(12, 148, 136, 0.35)' } : {
+      shadowColor: '#0c9488',
       shadowOpacity: 0.35,
       shadowRadius: 12,
       shadowOffset: { width: 0, height: 6 },
