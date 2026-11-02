@@ -43,6 +43,7 @@ const USER_STORAGE_KEY = 'shift_user';
 const REMEMBER_ME_KEY = 'remember_me';
 const REMEMBERED_USER_KEY = 'remembered_user';
 const SESSION_ACTIVE_KEY = 'session_active';
+const BIOMETRIC_CREDENTIALS_KEY = 'biometric_credentials';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -113,11 +114,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setRememberedUser(authUser);
           await AsyncStorage.setItem(REMEMBER_ME_KEY, 'true');
           await AsyncStorage.setItem(REMEMBERED_USER_KEY, JSON.stringify(authUser));
+          await AsyncStorage.setItem(
+            BIOMETRIC_CREDENTIALS_KEY,
+            JSON.stringify({
+              account: String(account),
+              username: username,
+              password: password,
+            })
+          );
         } else {
           setRememberMeState(false);
           setRememberedUser(null);
           await AsyncStorage.setItem(REMEMBER_ME_KEY, 'false');
           await AsyncStorage.removeItem(REMEMBERED_USER_KEY);
+          await AsyncStorage.removeItem(BIOMETRIC_CREDENTIALS_KEY);
         }
 
         return { success: true };
@@ -161,6 +171,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
       }
 
+      const storedCredsRaw = await AsyncStorage.getItem(BIOMETRIC_CREDENTIALS_KEY);
+      if (!storedCredsRaw) {
+        return {
+          success: false,
+          error: 'Please sign in with your password once to enable Biometric Login.',
+        };
+      }
+
+      let storedCreds: { account?: string; username?: string; password?: string } | null = null;
+      try {
+        storedCreds = JSON.parse(storedCredsRaw);
+      } catch {
+        return {
+          success: false,
+          error: 'Please sign in with your password once to enable Biometric Login.',
+        };
+      }
+
+      if (!storedCreds?.password || !storedCreds?.username) {
+        return {
+          success: false,
+          error: 'Please sign in with your password once to enable Biometric Login.',
+        };
+      }
+
       const result = await LocalAuthentication.authenticateAsync({
         promptMessage: `Sign in as ${rememberedUser.username}`,
         fallbackLabel: 'Use Password',
@@ -168,19 +203,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         disableDeviceFallback: false,
       });
 
-      if (result.success) {
-        setUser(rememberedUser);
-        setSessionActive(true);
-        await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(rememberedUser));
-        await AsyncStorage.setItem(SESSION_ACTIVE_KEY, 'true');
+      if (!result.success) {
+        return { success: false, error: result.error ?? 'Biometric verification was not completed.' };
+      }
+
+      // Biometrics verified on device! Establish active PHP session with backend:
+      const acc = storedCreds.account || String(rememberedUser.account || rememberedUser.acc_no || '1');
+      const loginRes = await login(acc, storedCreds.username, storedCreds.password, true);
+
+      if (loginRes.success) {
         return { success: true };
       }
 
-      return { success: false, error: result.error ?? 'Biometric verification was not completed.' };
+      return {
+        success: false,
+        error: loginRes.error ?? 'Server authentication failed. Please enter your password.',
+      };
     } catch (err: any) {
       return { success: false, error: err?.message ?? 'Biometric authentication failed.' };
     }
-  }, [rememberedUser]);
+  }, [rememberedUser, login]);
 
   const lockSession = useCallback(async () => {
     // Session didn't end on server, but local screen is locked to password/biometric
@@ -206,6 +248,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setRememberMeState(false);
     await AsyncStorage.removeItem(REMEMBERED_USER_KEY);
     await AsyncStorage.setItem(REMEMBER_ME_KEY, 'false');
+    await AsyncStorage.removeItem(BIOMETRIC_CREDENTIALS_KEY);
   }, []);
 
   useEffect(() => {

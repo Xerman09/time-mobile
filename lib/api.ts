@@ -49,11 +49,16 @@ export async function apiFetch<T = unknown>(
     headers['Cookie'] = _cookieJar;
   }
 
-  const res = await fetch(url, {
-    ...options,
-    credentials: 'include',
-    headers,
-  });
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      ...options,
+      credentials: 'include',
+      headers,
+    });
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Network request failed' };
+  }
 
   // Capture new session cookies
   const setCookie = res.headers.get('set-cookie') ?? '';
@@ -61,7 +66,12 @@ export async function apiFetch<T = unknown>(
     await saveCookies(setCookie);
   }
 
-  const text = await res.text();
+  let text = '';
+  try {
+    text = await res.text();
+  } catch (err: any) {
+    return { success: false, error: 'Failed to read response from server' };
+  }
   try {
     const parsed = JSON.parse(text) as ApiResponse<T>;
     if (!parsed.success && parsed.error) {
