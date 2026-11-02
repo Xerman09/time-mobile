@@ -11,6 +11,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { Feather } from '@expo/vector-icons';
 import { useAuth } from '../../hooks/useAuth';
+import { useAppUpdates } from '../../hooks/useAppUpdates';
 
 const ROLE_COLORS: Record<string, { bg: string; text: string }> = {
   superadmin: { bg: '#fdf4ff', text: '#a21caf' },
@@ -20,6 +21,7 @@ const ROLE_COLORS: Record<string, { bg: string; text: string }> = {
 
 export default function ProfileScreen() {
   const { user, logout, lockSession } = useAuth();
+  const { checkForUpdates, isChecking } = useAppUpdates();
 
   const roleConfig = ROLE_COLORS[user?.role ?? 'employee'] ?? ROLE_COLORS.employee;
 
@@ -110,6 +112,18 @@ export default function ProfileScreen() {
               label="Sign Out"
               onPress={handleLogout}
               danger
+            />
+          </View>
+        </View>
+
+        {/* In-App Updates */}
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>APP UPDATES</Text>
+          <View style={styles.card}>
+            <MenuButton
+              icon="refresh-cw"
+              label={isChecking ? "Checking for updates..." : "Check for Updates"}
+              onPress={() => checkForUpdates(true)}
             />
           </View>
         </View>

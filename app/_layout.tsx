@@ -2,11 +2,19 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import React, { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { AuthProvider, useAuth } from '../hooks/useAuth';
+import { useAppUpdates } from '../hooks/useAppUpdates';
+import { UpdateModal } from '../components/UpdateModal';
 
 function AuthGate() {
   const { user, isLoading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+  const {
+    updateModalVisible,
+    isDownloading,
+    applyUpdate,
+    dismissUpdateModal,
+  } = useAppUpdates();
 
   useEffect(() => {
     if (isLoading) return;
@@ -31,10 +39,18 @@ function AuthGate() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(auth)" />
-      <Stack.Screen name="(tabs)" />
-    </Stack>
+    <>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(tabs)" />
+      </Stack>
+      <UpdateModal
+        visible={updateModalVisible}
+        isDownloading={isDownloading}
+        onUpdate={applyUpdate}
+        onDismiss={dismissUpdateModal}
+      />
+    </>
   );
 }
 
