@@ -23,6 +23,13 @@ import { useAuth } from '../../hooks/useAuth';
 import { LiveClock } from '../../components/LiveClock';
 import { deriveStatus } from '../../components/StatusBadge';
 
+function resolveTs(ts: number | null | undefined, dateStr: string | null | undefined): number | null {
+  if (typeof ts === 'number' && ts > 0) return ts;
+  if (!dateStr || dateStr.trim() === '') return null;
+  const parsed = Date.parse(dateStr.replace(' ', 'T'));
+  return !isNaN(parsed) ? Math.floor(parsed / 1000) : null;
+}
+
 interface PunchButtonConfig {
   type: PunchType;
   label: string;
@@ -186,12 +193,12 @@ export default function HomeScreen() {
     <View style={styles.timestampsCard}>
       <Text style={styles.timestampsTitle}>TODAY'S TIMESTAMPS</Text>
       <View style={styles.pillsGrid}>
-          {[
-            { label: 'TIME IN', value: formatTime(record?.time_in_ts ?? null, status?.tz_name) },
-            { label: 'BREAK IN', value: formatTime(record?.break_in_ts ?? null, status?.tz_name) },
-            { label: 'BREAK OUT', value: formatTime(record?.break_out_ts ?? null, status?.tz_name) },
-            { label: 'TIME OUT', value: formatTime(record?.time_out_ts ?? null, status?.tz_name) },
-          ].map((item, idx) => (
+        {[
+          { label: 'TIME IN', value: formatTime(resolveTs(record?.time_in_ts, record?.time_in), status?.tz_name) },
+          { label: 'BREAK IN', value: formatTime(resolveTs(record?.break_in_ts, record?.break_in), status?.tz_name) },
+          { label: 'BREAK OUT', value: formatTime(resolveTs(record?.break_out_ts, record?.break_out), status?.tz_name) },
+          { label: 'TIME OUT', value: formatTime(resolveTs(record?.time_out_ts, record?.time_out), status?.tz_name) },
+        ].map((item, idx) => (
           <View key={idx} style={styles.timestampPill}>
             <Text style={styles.pillLabel}>{item.label}</Text>
             <Text style={styles.pillValue}>{item.value || '—'}</Text>

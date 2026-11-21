@@ -18,6 +18,8 @@ export interface AuthUser {
   acc_no: string | number;
   account: string | number;
   status: string;
+  company_name?: string;
+  business_name?: string;
 }
 
 interface AuthContextType {
@@ -81,10 +83,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const isSessionActive = storedSessionActive === 'true';
         setSessionActive(isSessionActive);
 
-        // If session was active and user is remembered, rehydrate the active user
-        if (storedUser && isSessionActive) {
+        // If user has a stored session or is remembered, rehydrate the active user
+        if (storedUser && (isSessionActive || isRemembered)) {
           try {
             setUser(JSON.parse(storedUser));
+            setSessionActive(true);
           } catch {}
         }
       } catch {

@@ -7,6 +7,11 @@
     "icon": "./assets/icon.png",
     "scheme": "workshift",
     "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0f172a"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.shift.timesystem",
@@ -16,7 +21,7 @@
     },
     "android": {
       "package": "com.shift.timesystem",
-      "versionCode": 8,
+      "versionCode": 9,
       "adaptiveIcon": {
         "backgroundColor": "#ffffff",
         "foregroundImage": "./assets/android-icon-foreground.png"

@@ -36,22 +36,24 @@ export function useAppUpdates(): AppUpdateState {
       let remoteBuild: number | null = null;
       let targetDownloadUrl = LATEST_APK_URL;
 
-      // 1. Try reading version.json directly from GitHub Release assets
-      try {
-        const vRes = await fetch(UPDATE_VERSION_URL, {
-          headers: { 'Cache-Control': 'no-cache' },
-        });
-        if (vRes.ok) {
-          const vData = await vRes.json();
-          if (vData && typeof vData.buildNumber === 'number') {
-            remoteBuild = vData.buildNumber;
-            if (vData.downloadUrl) {
-              targetDownloadUrl = vData.downloadUrl;
+      // 1. Try reading version.json directly from GitHub Release assets (native only, web lacks CORS on raw assets)
+      if (Platform.OS !== 'web') {
+        try {
+          const vRes = await fetch(UPDATE_VERSION_URL, {
+            headers: { 'Cache-Control': 'no-cache' },
+          });
+          if (vRes.ok) {
+            const vData = await vRes.json();
+            if (vData && typeof vData.buildNumber === 'number') {
+              remoteBuild = vData.buildNumber;
+              if (vData.downloadUrl) {
+                targetDownloadUrl = vData.downloadUrl;
+              }
             }
           }
+        } catch {
+          // Fallback to GitHub Releases API if version.json is not yet available
         }
-      } catch {
-        // Fallback to GitHub Releases API if version.json is not yet available
       }
 
       // 2. Fallback: Query GitHub Releases Tag API

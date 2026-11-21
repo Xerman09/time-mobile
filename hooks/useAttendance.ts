@@ -125,6 +125,7 @@ export function useAttendance() {
   const [status, setStatus] = useState<AttendanceStatus | null>(null);
   const [history, setHistory] = useState<AttendanceRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isPunching, setIsPunching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [histPage, setHistPage] = useState(1);
@@ -305,24 +306,37 @@ export function useAttendance() {
     [startTicker, isOffline, status?.track_location]
   );
 
-  const fetchHistory = useCallback(async (page = 1) => {
+  const fetchHistory = useCallback(async (page = 1, append = false) => {
     if (isOffline) return;
+    if (append) {
+      setIsLoadingMore(true);
+    }
     try {
       const res = await apiGet<{
         items: AttendanceRecord[];
         page: number;
         pages: number;
         total: number;
-      }>(ENDPOINTS.shift, { action: 'history', page, limit: 14 });
+      }>(ENDPOINTS.shift, { action: 'history', page, limit: 15 });
 
       if (res.success && res.data) {
-        setHistory(res.data.items);
+        if (append) {
+          setHistory((prev) => {
+            const existingIds = new Set(prev.map((i) => i.id));
+            const newItems = res.data!.items.filter((i) => !existingIds.has(i.id));
+            return [...prev, ...newItems];
+          });
+        } else {
+          setHistory(res.data.items);
+        }
         setHistPage(res.data.page);
         setHistPages(res.data.pages);
         setHistTotal(res.data.total);
       }
     } catch {
       // Silently fail history fetch
+    } finally {
+      setIsLoadingMore(false);
     }
   }, [isOffline]);
 
@@ -334,6 +348,7 @@ export function useAttendance() {
     status,
     workedSec,
     isLoading,
+    isLoadingMore,
     isPunching,
     error,
     punch,

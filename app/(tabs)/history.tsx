@@ -18,30 +18,82 @@ import { AttendanceRow } from '../../components/AttendanceRow';
 
 export default function HistoryScreen() {
   const insets = useSafeAreaInsets();
-  const { history, histPage, histPages, histTotal, fetchHistory, isLoading } = useAttendance();
-  const [refreshing, setRefreshing] = useState(false);
-  const [page, setPage] = useState(1);
+  const {
+    history,
+    histPage,
+    histPages,
+    histTotal,
+    fetchHistory,
+    isLoading,
+    isLoadingMore,
+  } = useAttendance();
 
+  const [refreshing, setRefreshing] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Initial load
   useEffect(() => {
-    fetchHistory(page);
-  }, [page, fetchHistory]);
+    fetchHistory(1, false);
+    setCurrentPage(1);
+  }, [fetchHistory]);
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await fetchHistory(1);
-    setPage(1);
+    setCurrentPage(1);
+    await fetchHistory(1, false);
     setRefreshing(false);
   };
 
-  const goTo = (p: number) => {
-    if (p < 1 || p > histPages) return;
-    setPage(p);
+  const handleLoadMore = () => {
+    if (currentPage < histPages && !isLoadingMore && !isLoading) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      fetchHistory(nextPage, true);
+    }
   };
 
-  const safeTopPadding = Math.max(
-    insets.top,
-    Platform.OS === 'android' ? (RNStatusBar.currentHeight ?? 24) : 0
-  ) + 12;
+  const safeTopPadding =
+    Math.max(
+      insets.top,
+      Platform.OS === 'android' ? (RNStatusBar.currentHeight ?? 24) : 0
+    ) + 12;
+
+  const renderFooter = () => {
+    if (isLoadingMore) {
+      return (
+        <View style={styles.footerLoading}>
+          <ActivityIndicator size="small" color="#0c9488" />
+          <Text style={styles.footerLoadingText}>Loading older shifts...</Text>
+        </View>
+      );
+    }
+
+    if (currentPage < histPages) {
+      return (
+        <TouchableOpacity
+          style={styles.loadMoreBtn}
+          onPress={handleLoadMore}
+          activeOpacity={0.8}
+        >
+          <Feather name="arrow-down-circle" size={16} color="#0c9488" style={{ marginRight: 6 }} />
+          <Text style={styles.loadMoreText}>
+            Load More Shifts ({history.length} of {histTotal})
+          </Text>
+        </TouchableOpacity>
+      );
+    }
+
+    if (history.length > 0 && history.length >= histTotal) {
+      return (
+        <View style={styles.endNotice}>
+          <Feather name="check-circle" size={14} color="#94a3b8" style={{ marginRight: 6 }} />
+          <Text style={styles.endNoticeText}>All {histTotal} recorded shifts loaded</Text>
+        </View>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <View style={styles.container}>
@@ -55,11 +107,13 @@ export default function HistoryScreen() {
         </View>
         <View style={styles.statsBadge}>
           <Feather name="layers" size={13} color="#0c9488" style={{ marginRight: 4 }} />
-          <Text style={styles.statsBadgeText}>{histTotal} {histTotal === 1 ? 'Shift' : 'Shifts'}</Text>
+          <Text style={styles.statsBadgeText}>
+            {histTotal > 0 ? `${history.length} of ${histTotal}` : `${histTotal}`} {histTotal === 1 ? 'Shift' : 'Shifts'}
+          </Text>
         </View>
       </View>
 
-      {isLoading && !refreshing ? (
+      {isLoading && !refreshing && history.length === 0 ? (
         <View style={styles.centered}>
           <ActivityIndicator size="large" color="#0c9488" />
           <Text style={styles.loadingText}>Loading shift history...</Text>
@@ -69,8 +123,13 @@ export default function HistoryScreen() {
           data={history}
           keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => <AttendanceRow record={item} />}
-          contentContainerStyle={styles.list}
+          contentContainerStyle={[
+            styles.list,
+            { paddingBottom: Math.max(insets.bottom + 100, 120) },
+          ]}
           showsVerticalScrollIndicator={false}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.4}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -92,37 +151,7 @@ export default function HistoryScreen() {
               </TouchableOpacity>
             </View>
           }
-          ListFooterComponent={
-            histPages > 1 ? (
-              <View style={styles.pagination}>
-                <TouchableOpacity
-                  style={[styles.pageBtn, page <= 1 && styles.pageBtnDisabled]}
-                  onPress={() => goTo(page - 1)}
-                  disabled={page <= 1}
-                  activeOpacity={0.7}
-                >
-                  <Feather name="chevron-left" size={16} color={page <= 1 ? '#cbd5e1' : '#0f172a'} />
-                  <Text style={[styles.pageBtnText, page <= 1 && styles.pageBtnTextDisabled]}>Previous</Text>
-                </TouchableOpacity>
-
-                <View style={styles.pagePill}>
-                  <Text style={styles.pagePillText}>
-                    Page <Text style={styles.pagePillActive}>{page}</Text> of {histPages}
-                  </Text>
-                </View>
-
-                <TouchableOpacity
-                  style={[styles.pageBtn, page >= histPages && styles.pageBtnDisabled]}
-                  onPress={() => goTo(page + 1)}
-                  disabled={page >= histPages}
-                  activeOpacity={0.7}
-                >
-                  <Text style={[styles.pageBtnText, page >= histPages && styles.pageBtnTextDisabled]}>Next</Text>
-                  <Feather name="chevron-right" size={16} color={page >= histPages ? '#cbd5e1' : '#0f172a'} />
-                </TouchableOpacity>
-              </View>
-            ) : null
-          }
+          ListFooterComponent={renderFooter}
         />
       )}
     </View>
@@ -175,7 +204,6 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: 16,
-    paddingBottom: 36,
   },
   centered: {
     flex: 1,
@@ -232,49 +260,46 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#0f766e',
   },
-  pagination: {
+  footerLoading: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 16,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#f1f5f9',
+    paddingVertical: 20,
+    gap: 8,
   },
-  pageBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    gap: 4,
-  },
-  pageBtnDisabled: {
-    backgroundColor: '#f8fafc',
-    borderColor: '#f1f5f9',
-  },
-  pageBtnText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#0f172a',
-  },
-  pageBtnTextDisabled: {
-    color: '#cbd5e1',
-  },
-  pagePill: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-  },
-  pagePillText: {
+  footerLoadingText: {
     fontSize: 12,
     color: '#64748b',
     fontWeight: '500',
   },
-  pagePillActive: {
+  loadMoreBtn: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    paddingVertical: 12,
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: '#ccfbf1',
+    ...(Platform.OS === 'web'
+      ? { boxShadow: '0 2px 6px rgba(0,0,0,0.03)' }
+      : { elevation: 1 }),
+  },
+  loadMoreText: {
+    fontSize: 13,
     fontWeight: '700',
-    color: '#0f172a',
+    color: '#0f766e',
+  },
+  endNotice: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 18,
+  },
+  endNoticeText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#94a3b8',
   },
 });
