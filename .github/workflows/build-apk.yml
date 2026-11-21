@@ -28,6 +28,7 @@ jobs:
   build:
     name: Build Android APK
     runs-on: ubuntu-latest
+    timeout-minutes: 40
 
     steps:
       - name: 📥 Checkout repository
@@ -48,27 +49,39 @@ jobs:
       - name: 🐘 Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: ⚙️ Configure Gradle Memory & Build Properties
+        run: |
+          mkdir -p ~/.gradle
+          cat << 'EOF' > ~/.gradle/gradle.properties
+          org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+UseParallelGC
+          org.gradle.parallel=true
+          org.gradle.vfs.watch=false
+          EOF
+
       - name: 📦 Install npm dependencies
         run: npm ci
 
       - name: ⚙️ Generate native Android project (Expo Prebuild)
-        run: npx expo prebuild --platform android --clean
+        run: npx expo prebuild --platform android --clean --no-install
+        env:
+          CI: true
 
       - name: 🔑 Set Gradle wrapper executable
         run: chmod +x android/gradlew
 
       - name: 🔨 Build Android APK
+        env:
+          CI: true
+          NODE_OPTIONS: "--max-old-space-size=4096"
+          ORG_GRADLE_PROJECT_org.gradle.jvmargs: "-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+UseParallelGC"
+          BUILD_TYPE: ${{ github.event.inputs.build_type || 'release' }}
         run: |
-          BUILD_TYPE="${{ github.event.inputs.build_type }}"
-          if [ -z "$BUILD_TYPE" ]; then
-            BUILD_TYPE="release"
-          fi
-          echo "Building APK with configuration: $BUILD_TYPE"
+          echo "Building APK with configuration: ${BUILD_TYPE}"
           cd android
-          if [ "$BUILD_TYPE" = "debug" ]; then
-            ./gradlew assembleDebug --no-daemon
+          if [ "${BUILD_TYPE}" = "debug" ]; then
+            ./gradlew :app:assembleDebug --console=plain --no-daemon
           else
-            ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a,armeabi-v7a --no-daemon
+            ./gradlew :app:assembleRelease -PreactNativeArchitectures=arm64-v8a,armeabi-v7a --console=plain --no-daemon
           fi
 
       - name: 🔍 Locate and prepare APK
@@ -82,41 +95,30 @@ jobs:
           fi
           echo "Found APK: $APK_FILE"
 
-          BUILD_TYPE="${{ github.event.inputs.build_type }}"
-          if [ -z "$BUILD_TYPE" ]; then
-            BUILD_TYPE="release"
-          fi
-
+          BUILD_TYPE="${{ github.event.inputs.build_type || 'release' }}"
           APK_NAME="WorkShift-${BUILD_TYPE}-build${{ github.run_number }}.apk"
-          cp "$APK_FILE" "build-output/$APK_NAME"
+
+          cp "$APK_FILE" "build-output/${APK_NAME}"
           cp "$APK_FILE" "build-output/WorkShift-latest.apk"
-          
-          echo "apk_name=$APK_NAME" >> $GITHUB_OUTPUT
+
+          echo "apk_name=${APK_NAME}" >> $GITHUB_OUTPUT
+          echo "apk_path=build-output/${APK_NAME}" >> $GITHUB_OUTPUT
           ls -la build-output/
 
       - name: 📤 Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: WorkShift-APK-build-${{ github.run_number }}
+          name: WorkShift-Android-APK
           path: build-output/*.apk
           retention-days: 30
 
       - name: 🚀 Publish / Update GitHub Release
-        if: github.ref == 'refs/heads/main'
-        continue-on-error: true
         uses: softprops/action-gh-release@v2
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with:
           tag_name: latest-apk
-          name: WorkShift Latest APK (Build #${{ github.run_number }})
-          body: |
-            ### WorkShift Mobile App - Automated Build
-            - **Build Run**: #${{ github.run_number }}
-            - **Commit**: ${{ github.sha }}
-            - **Branch**: `${{ github.ref_name }}`
-            - **APK Name**: `${{ steps.prepare_apk.outputs.apk_name }}`
-
-            Download the attached APK below to install on Android devices.
+          name: WorkShift Mobile App (Latest Build)
+          draft: false
+          prerelease: false
           files: build-output/*.apk
-          make_latest: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
