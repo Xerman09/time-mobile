@@ -56,12 +56,12 @@ export function UpdateModal({
               {isDownloading ? (
                 <View style={styles.loadingRow}>
                   <ActivityIndicator size="small" color="#ffffff" />
-                  <Text style={styles.btnPrimaryText}>Updating...</Text>
+                  <Text style={styles.btnPrimaryText}>Opening...</Text>
                 </View>
               ) : (
                 <View style={styles.btnRow}>
-                  <Text style={styles.btnPrimaryText}>Update & Restart</Text>
-                  <Feather name="refresh-cw" size={15} color="#ffffff" style={{ marginLeft: 6 }} />
+                  <Text style={styles.btnPrimaryText}>Download & Install</Text>
+                  <Feather name="download" size={15} color="#ffffff" style={{ marginLeft: 6 }} />
                 </View>
               )}
             </TouchableOpacity>

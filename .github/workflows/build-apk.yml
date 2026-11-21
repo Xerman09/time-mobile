@@ -101,6 +101,16 @@ jobs:
           cp "$APK_FILE" "build-output/${APK_NAME}"
           cp "$APK_FILE" "build-output/WorkShift-latest.apk"
 
+          cat << EOF > build-output/version.json
+          {
+            "buildNumber": ${{ github.run_number }},
+            "version": "1.0.0",
+            "apkName": "${APK_NAME}",
+            "downloadUrl": "https://github.com/Xerman09/time-mobile/releases/download/latest-apk/WorkShift-latest.apk",
+            "publishedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          EOF
+
           echo "apk_name=${APK_NAME}" >> $GITHUB_OUTPUT
           echo "apk_path=build-output/${APK_NAME}" >> $GITHUB_OUTPUT
           ls -la build-output/
@@ -109,7 +119,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: WorkShift-Android-APK
-          path: build-output/*.apk
+          path: |
+            build-output/*.apk
+            build-output/version.json
           retention-days: 30
 
       - name: 🚀 Publish / Update GitHub Release
@@ -120,5 +132,7 @@ jobs:
           name: WorkShift Mobile App (Latest Build)
           draft: false
           prerelease: false
-          files: build-output/*.apk
+          files: |
+            build-output/*.apk
+            build-output/version.json
         continue-on-error: true
