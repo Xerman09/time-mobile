@@ -8,7 +8,7 @@ import React, {
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as LocalAuthentication from 'expo-local-authentication';
-import { apiPost, clearCookies, loadCookies } from '../lib/api';
+import { apiPost, clearCookies, loadCookies, setSessionId } from '../lib/api';
 import { ENDPOINTS } from '../constants/Config';
 
 export interface AuthUser {
@@ -103,6 +103,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       );
 
       if (res.success && res.user) {
+        if (res.session_id) {
+          await setSessionId(res.session_id);
+        }
         const authUser = res.user as AuthUser;
         setUser(authUser);
         setSessionActive(true);

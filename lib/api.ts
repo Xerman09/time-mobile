@@ -7,6 +7,13 @@ export async function loadCookies(): Promise<void> {
   _cookieJar = (await AsyncStorage.getItem('session_cookie')) ?? '';
 }
 
+export async function setSessionId(sessionId: string): Promise<void> {
+  if (sessionId) {
+    _cookieJar = `PHPSESSID=${sessionId}`;
+    await AsyncStorage.setItem('session_cookie', _cookieJar);
+  }
+}
+
 async function saveCookies(raw: string): Promise<void> {
   // Extract Set-Cookie headers and store the PHPSESSID
   const match = raw.match(/PHPSESSID=[^;]+/);
@@ -29,6 +36,7 @@ export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
+  session_id?: string;
   [key: string]: unknown;
 }
 
@@ -74,6 +82,9 @@ export async function apiFetch<T = unknown>(
   }
   try {
     const parsed = JSON.parse(text) as ApiResponse<T>;
+    if (parsed.session_id && typeof parsed.session_id === 'string') {
+      await setSessionId(parsed.session_id);
+    }
     if (!parsed.success && parsed.error) {
       const e = parsed.error.toLowerCase();
       if (
