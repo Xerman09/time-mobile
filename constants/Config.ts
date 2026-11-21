@@ -5,7 +5,7 @@ export const BASE_URL = 'https://time.usintellix.com';
 
 // App Build & Release Configuration
 export const APP_VERSION = '1.0.0';
-export const CURRENT_BUILD_NUMBER = 4; // Build #4
+export const CURRENT_BUILD_NUMBER = 5; // Build #5
 export const GITHUB_REPO = 'Xerman09/time-mobile';
 export const UPDATE_VERSION_URL = `https://github.com/${GITHUB_REPO}/releases/download/latest-apk/version.json`;
 export const UPDATE_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/tags/latest-apk`;

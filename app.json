@@ -16,7 +16,7 @@
     },
     "android": {
       "package": "com.shift.timesystem",
-      "versionCode": 7,
+      "versionCode": 8,
       "adaptiveIcon": {
         "backgroundColor": "#ffffff",
         "foregroundImage": "./assets/android-icon-foreground.png"

@@ -41,7 +41,7 @@ export default function HistoryScreen() {
   const safeTopPadding = Math.max(
     insets.top,
     Platform.OS === 'android' ? (RNStatusBar.currentHeight ?? 24) : 0
-  ) + (Platform.OS === 'web' ? 12 : 12);
+  ) + 12;
 
   return (
     <View style={styles.container}>
@@ -49,13 +49,20 @@ export default function HistoryScreen() {
 
       {/* Header */}
       <View style={[styles.header, { paddingTop: safeTopPadding }]}>
-        <Text style={styles.title}>Attendance History</Text>
-        <Text style={styles.subtitle}>{histTotal} records</Text>
+        <View style={styles.headerLeft}>
+          <Text style={styles.title}>Attendance History</Text>
+          <Text style={styles.subtitle}>Review your recorded shifts and work hours</Text>
+        </View>
+        <View style={styles.statsBadge}>
+          <Feather name="layers" size={13} color="#0c9488" style={{ marginRight: 4 }} />
+          <Text style={styles.statsBadgeText}>{histTotal} {histTotal === 1 ? 'Shift' : 'Shifts'}</Text>
+        </View>
       </View>
 
       {isLoading && !refreshing ? (
         <View style={styles.centered}>
           <ActivityIndicator size="large" color="#0c9488" />
+          <Text style={styles.loadingText}>Loading shift history...</Text>
         </View>
       ) : (
         <FlatList
@@ -65,12 +72,24 @@ export default function HistoryScreen() {
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0c9488" />
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor="#0c9488"
+              colors={['#0c9488']}
+            />
           }
           ListEmptyComponent={
             <View style={styles.empty}>
-              <Feather name="clipboard" size={48} color="#cbd5e1" style={styles.emptyIcon} />
-              <Text style={styles.emptyText}>No attendance records found.</Text>
+              <View style={styles.emptyIconWrap}>
+                <Feather name="calendar" size={32} color="#94a3b8" />
+              </View>
+              <Text style={styles.emptyTitle}>No Shifts Recorded</Text>
+              <Text style={styles.emptySubtitle}>Your completed attendance punches will appear here.</Text>
+              <TouchableOpacity style={styles.emptyRefreshBtn} onPress={onRefresh} activeOpacity={0.8}>
+                <Feather name="refresh-cw" size={14} color="#0c9488" style={{ marginRight: 6 }} />
+                <Text style={styles.emptyRefreshText}>Refresh</Text>
+              </TouchableOpacity>
             </View>
           }
           ListFooterComponent={
@@ -80,18 +99,26 @@ export default function HistoryScreen() {
                   style={[styles.pageBtn, page <= 1 && styles.pageBtnDisabled]}
                   onPress={() => goTo(page - 1)}
                   disabled={page <= 1}
+                  activeOpacity={0.7}
                 >
-                  <Text style={styles.pageBtnText}>← Prev</Text>
+                  <Feather name="chevron-left" size={16} color={page <= 1 ? '#cbd5e1' : '#0f172a'} />
+                  <Text style={[styles.pageBtnText, page <= 1 && styles.pageBtnTextDisabled]}>Previous</Text>
                 </TouchableOpacity>
-                <Text style={styles.pageInfo}>
-                  {page} / {histPages}
-                </Text>
+
+                <View style={styles.pagePill}>
+                  <Text style={styles.pagePillText}>
+                    Page <Text style={styles.pagePillActive}>{page}</Text> of {histPages}
+                  </Text>
+                </View>
+
                 <TouchableOpacity
                   style={[styles.pageBtn, page >= histPages && styles.pageBtnDisabled]}
                   onPress={() => goTo(page + 1)}
                   disabled={page >= histPages}
+                  activeOpacity={0.7}
                 >
-                  <Text style={styles.pageBtnText}>Next →</Text>
+                  <Text style={[styles.pageBtnText, page >= histPages && styles.pageBtnTextDisabled]}>Next</Text>
+                  <Feather name="chevron-right" size={16} color={page >= histPages ? '#cbd5e1' : '#0f172a'} />
                 </TouchableOpacity>
               </View>
             ) : null
@@ -103,38 +130,151 @@ export default function HistoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8fafc' },
+  container: {
+    flex: 1,
+    backgroundColor: '#f8fafc',
+  },
   header: {
-    paddingBottom: 14,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 20,
-    backgroundColor: '#fff',
+    paddingBottom: 16,
+    backgroundColor: '#ffffff',
     borderBottomWidth: 1,
     borderBottomColor: '#f1f5f9',
   },
-  title: { fontSize: 22, fontWeight: '800', color: '#0f172a' },
-  subtitle: { fontSize: 13, color: '#94a3b8', marginTop: 2 },
-
-  list: { padding: 16, paddingBottom: 40 },
-
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  empty: { alignItems: 'center', paddingTop: 60 },
-  emptyIcon: { marginBottom: 12 },
-  emptyText: { fontSize: 15, color: '#94a3b8', fontWeight: '500' },
-
-  pagination: {
+  headerLeft: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#0f172a',
+    letterSpacing: -0.3,
+  },
+  subtitle: {
+    fontSize: 12,
+    color: '#64748b',
+    marginTop: 2,
+  },
+  statsBadge: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#f0fdfa',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#ccfbf1',
+  },
+  statsBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0f766e',
+  },
+  list: {
+    padding: 16,
+    paddingBottom: 36,
+  },
+  centered: {
+    flex: 1,
     justifyContent: 'center',
-    gap: 16,
-    paddingVertical: 16,
+    alignItems: 'center',
+    padding: 32,
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 13,
+    color: '#64748b',
+    fontWeight: '500',
+  },
+  empty: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+    paddingHorizontal: 20,
+  },
+  emptyIconWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#f1f5f9',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1e293b',
+    marginBottom: 4,
+  },
+  emptySubtitle: {
+    fontSize: 13,
+    color: '#64748b',
+    textAlign: 'center',
+    marginBottom: 16,
+    maxWidth: 240,
+  },
+  emptyRefreshBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0fdfa',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ccfbf1',
+  },
+  emptyRefreshText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#0f766e',
+  },
+  pagination: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 16,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#f1f5f9',
   },
   pageBtn: {
-    backgroundColor: '#0c9488',
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    gap: 4,
   },
-  pageBtnDisabled: { backgroundColor: '#e2e8f0' },
-  pageBtnText: { color: '#fff', fontWeight: '700', fontSize: 14 },
-  pageInfo: { fontSize: 14, color: '#64748b', fontWeight: '600' },
+  pageBtnDisabled: {
+    backgroundColor: '#f8fafc',
+    borderColor: '#f1f5f9',
+  },
+  pageBtnText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0f172a',
+  },
+  pageBtnTextDisabled: {
+    color: '#cbd5e1',
+  },
+  pagePill: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  pagePillText: {
+    fontSize: 12,
+    color: '#64748b',
+    fontWeight: '500',
+  },
+  pagePillActive: {
+    fontWeight: '700',
+    color: '#0f172a',
+  },
 });
